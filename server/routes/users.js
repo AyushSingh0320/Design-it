@@ -58,7 +58,7 @@ router.get('/:id', async (req, res) => {
 router.patch('/profile', auth, upload.single('profileImage'), async (req, res) => {
   try {
     const updates = req.body;
-    const allowedUpdates = ['name', 'bio', 'skills', 'socialLinks'];
+    const allowedUpdates = ['name', 'bio', 'skills', 'socialLinks', 'profileImage'];
     
     // Handle profile image upload
     if (req.file) {
