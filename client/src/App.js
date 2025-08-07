@@ -27,9 +27,12 @@ const ErrorBoundary = ({ error }) => (
 const AppLayout = () => (
   <AuthProvider>
     <div className="min-h-screen relative">
-      <div className="absolute inset-0 z-0">
+      {/* Background positioned absolutely to cover entire viewport */}
+      <div className="fixed inset-0 w-full h-full z-0">
         <DarkVeil />
       </div>
+      
+      {/* Content positioned relative to appear above background */}
       <div className="relative z-10">
         <Navbar />
         <main className="container mx-auto px-4 py-8">

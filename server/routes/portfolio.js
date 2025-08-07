@@ -125,6 +125,7 @@ router.post('/', auth, upload.array('images', 5), async (req, res) => {
     console.log('Request body:', req.body);
     console.log('Request files:', req.files);
     console.log('User ID:', req.user._id);
+
     
     const { title, description, category, tags, isPublic } = req.body;
     
@@ -205,7 +206,8 @@ router.get('/:id', async (req, res) => {
       delete portfolioObj.user._id;
     }
 
-    res.json(portfolioObj);
+    res.json(portfolioObj , {
+      message: 'Portfolio item fetched successfully'});
   } catch (error) {
     console.error('Error fetching portfolio item:', error);
     res.status(400).json({ message: error.message });
