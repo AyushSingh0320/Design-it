@@ -163,7 +163,7 @@ const CreatePortfolioItem = () => {
                   <img
                     src={preview}
                     alt={`Preview ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-md"
+                    className="w-full h-32 object-cover rounded-md border border-gray-300"
                   />
                 </div>
               ))}

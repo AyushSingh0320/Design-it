@@ -84,7 +84,9 @@ const Dashboard = () => {
           {portfolioItems.map((item) => (
             <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
               <img
-                src={item.imageUrl}
+                src={item.images && item.images.length > 0 
+                  ? `http://localhost:5000${item.images[0].url}` 
+                  : 'https://via.placeholder.com/400x300?text=No+Image'}
                 alt={item.title}
                 className="w-full h-48 object-cover"
               />

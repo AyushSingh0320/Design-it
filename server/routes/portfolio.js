@@ -29,7 +29,7 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024 // 5MB limit
   },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif/;
+    const allowedTypes = /jpeg|jpg|png|gif|pdf/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
 
@@ -91,6 +91,7 @@ router.get('/my-portfolio', auth, async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
 
 // Get specific user's portfolio items
 router.get('/user/:userId', async (req, res) => {
