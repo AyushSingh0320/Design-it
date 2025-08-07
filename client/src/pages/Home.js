@@ -6,29 +6,21 @@ const Home = () => {
   const { user } = useAuth();
 
   return (
-    <div className="bg-white">
+    <div className="relative">
       {/* Hero section */}
-      <div className="relative bg-gray-900">
-        <div className="absolute inset-0">
-          <img
-            className="w-full h-full object-cover"
-            src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
-            alt="Designer workspace"
-          />
-          <div className="absolute inset-0 bg-gray-900 mix-blend-multiply" />
-        </div>
+      <div className="relative">
         <div className="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl drop-shadow-lg">
             DesignerHub
           </h1>
-          <p className="mt-6 text-xl text-gray-300 max-w-3xl">
+          <p className="mt-6 text-xl text-gray-200 max-w-3xl drop-shadow-md">
             Showcase your design portfolio, connect with other designers, and collaborate on exciting projects.
           </p>
           <div className="mt-10">
             {user ? (
               <Link
                 to="/dashboard"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-black bg-white hover:bg-gray-100"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-black bg-white/90 hover:bg-white backdrop-blur-sm shadow-lg"
               >
                 Go to Dashboard
               </Link>
@@ -36,13 +28,13 @@ const Home = () => {
               <div className="space-x-4">
                 <Link
                   to="/login"
-                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-black bg-white hover:bg-gray-100"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-black bg-white/90 hover:bg-white backdrop-blur-sm shadow-lg"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
-                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600/90 hover:bg-primary-700 backdrop-blur-sm shadow-lg"
                 >
                   Sign Up
                 </Link>
@@ -53,14 +45,14 @@ const Home = () => {
       </div>
 
       {/* Features section */}
-      <div className="py-12 bg-white">
+      <div className="py-12 bg-black/20 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <h2 className="text-base text-primary-600 font-semibold tracking-wide uppercase">Features</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="text-base text-primary-400 font-semibold tracking-wide uppercase">Features</h2>
+            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-white sm:text-4xl drop-shadow-lg">
               Everything you need to showcase your work
             </p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+            <p className="mt-4 max-w-2xl text-xl text-gray-200 lg:mx-auto drop-shadow-md">
               DesignerHub provides all the tools you need to build your online presence and connect with other designers.
             </p>
           </div>
@@ -74,8 +66,8 @@ const Home = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">Portfolio Management</h3>
-                  <p className="mt-2 text-base text-gray-500">
+                  <h3 className="text-lg leading-6 font-medium text-white">Portfolio Management</h3>
+                  <p className="mt-2 text-base text-gray-200">
                     Create and manage your portfolio with ease. Showcase your best work with high-quality images and detailed descriptions.
                   </p>
                 </div>
@@ -88,8 +80,8 @@ const Home = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">Collaboration</h3>
-                  <p className="mt-2 text-base text-gray-500">
+                  <h3 className="text-lg leading-6 font-medium text-white">Collaboration</h3>
+                  <p className="mt-2 text-base text-gray-200">
                     Connect with other designers and collaborate on projects. Share ideas and get feedback from the community.
                   </p>
                 </div>
@@ -102,8 +94,8 @@ const Home = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">Discover</h3>
-                  <p className="mt-2 text-base text-gray-500">
+                  <h3 className="text-lg leading-6 font-medium text-white">Discover</h3>
+                  <p className="mt-2 text-base text-gray-200">
                     Explore amazing designs from talented creators. Get inspired and find new opportunities.
                   </p>
                 </div>
@@ -116,8 +108,8 @@ const Home = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">Customization</h3>
-                  <p className="mt-2 text-base text-gray-500">
+                  <h3 className="text-lg leading-6 font-medium text-white">Customization</h3>
+                  <p className="mt-2 text-base text-gray-200">
                     Personalize your profile and portfolio to match your unique style and brand.
                   </p>
                 </div>

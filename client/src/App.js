@@ -13,6 +13,7 @@ import PortfolioItem from './pages/PortfolioItem';
 import CreatePortfolioItem from './pages/CreatePortfolioItem';
 import EditPortfolioItem from './pages/EditPortfolioItem';
 import CreateCollaborationRequest from './pages/CreateCollaborationRequest';
+import DarkVeil from './Background';
 
 const ErrorBoundary = ({ error }) => (
   <div className="min-h-screen flex items-center justify-center">
@@ -25,11 +26,16 @@ const ErrorBoundary = ({ error }) => (
 
 const AppLayout = () => (
   <AuthProvider>
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        <Outlet />
-      </main>
+    <div className="min-h-screen relative">
+      <div className="absolute inset-0 z-0">
+        <DarkVeil />
+      </div>
+      <div className="relative z-10">
+        <Navbar />
+        <main className="container mx-auto px-4 py-8">
+          <Outlet />
+        </main>
+      </div>
     </div>
   </AuthProvider>
 );

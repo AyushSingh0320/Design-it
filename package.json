@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "mongodb": "6.17"
+    "mongodb": "6.17",
+    "ogl": "^1.0.11"
   }
 }
