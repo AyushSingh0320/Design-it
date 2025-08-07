@@ -243,6 +243,96 @@ router.patch('/:id', auth, upload.array('images', 5), async (req, res) => {
   }
 });
 
+// Update portfolio item
+router.put('/:id', auth, upload.array('images', 5), async (req, res) => {
+  try {
+    const { title, description, category, tags, isPublic, existingImages } = req.body;
+    
+    // Find the portfolio item and check ownership
+    const portfolio = await Portfolio.findOne({
+      _id: req.params.id,
+      user: req.user._id
+    });
+
+    if (!portfolio) {
+      return res.status(404).json({ message: 'Portfolio item not found' });
+    }
+
+    // Validate required fields
+    if (!title) {
+      return res.status(400).json({ message: 'Title is required' });
+    }
+    if (!description) {
+      return res.status(400).json({ message: 'Description is required' });
+    }
+    if (!category) {
+      return res.status(400).json({ message: 'Category is required' });
+    }
+
+    // Handle tags properly
+    let parsedTags = [];
+    if (tags) {
+      try {
+        parsedTags = typeof tags === 'string' ? JSON.parse(tags) : tags;
+        if (!Array.isArray(parsedTags)) {
+          parsedTags = [parsedTags];
+        }
+      } catch (error) {
+        console.error('Error parsing tags:', error);
+        parsedTags = [];
+      }
+    }
+
+    // Handle existing images
+    let existingImagesArray = [];
+    if (existingImages) {
+      try {
+        existingImagesArray = typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages;
+        if (!Array.isArray(existingImagesArray)) {
+          existingImagesArray = [];
+        }
+      } catch (error) {
+        console.error('Error parsing existing images:', error);
+        existingImagesArray = [];
+      }
+    }
+
+    // Process new images if any
+    const newImages = req.files ? req.files.map(file => ({
+      url: `/uploads/${file.filename}`,
+      caption: ''
+    })) : [];
+
+    // Combine existing and new images
+    const allImages = [...existingImagesArray, ...newImages];
+
+    // Check if at least one image exists
+    if (allImages.length === 0) {
+      return res.status(400).json({ message: 'At least one image is required' });
+    }
+
+    // Update the portfolio item
+    portfolio.title = title;
+    portfolio.description = description;
+    portfolio.category = category;
+    portfolio.tags = parsedTags;
+    portfolio.isPublic = isPublic === 'true' || isPublic === true;
+    portfolio.images = allImages;
+    portfolio.updatedAt = Date.now();
+
+    await portfolio.save();
+
+    console.log('Portfolio item updated successfully');
+    res.json(portfolio);
+  } catch (error) {
+    console.error('Error updating portfolio item:', error);
+    res.status(400).json({ 
+      message: error.message,
+      details: error.stack
+    });
+  }
+});
+
 // Delete portfolio item
 router.delete('/:id', auth, async (req, res) => {
   try {

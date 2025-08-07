@@ -11,6 +11,7 @@ import Gallery from './pages/Gallery';
 import Profile from './pages/Profile';
 import PortfolioItem from './pages/PortfolioItem';
 import CreatePortfolioItem from './pages/CreatePortfolioItem';
+import EditPortfolioItem from './pages/EditPortfolioItem';
 import CreateCollaborationRequest from './pages/CreateCollaborationRequest';
 
 const ErrorBoundary = ({ error }) => (
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: 'portfolio/:id',
         element: <PortfolioItem />
+      },
+      {
+        path: 'portfolio/:id/edit',
+        element: <PrivateRoute><EditPortfolioItem /></PrivateRoute>
       },
       {
         path: 'collaboration/create',

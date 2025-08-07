@@ -82,7 +82,11 @@ const Dashboard = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {portfolioItems.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div 
+              key={item.id} 
+              className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200"
+              onClick={() => navigate(`/portfolio/${item._id || item.id}`)}
+            >
               <img
                 src={item.images && item.images.length > 0 
                   ? `http://localhost:5000${item.images[0].url}` 
