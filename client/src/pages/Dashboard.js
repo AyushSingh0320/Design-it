@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from '../utils/axios';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
@@ -9,6 +9,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
+  // const {id} = useParams
 
   useEffect(() => {
     const fetchPortfolioItems = async () => {
@@ -19,7 +20,7 @@ const Dashboard = () => {
         }
 
         const response = await axios.get('/portfolio/my-portfolio');
-        setPortfolioItems(response.data);
+      setPortfolioItems(response.data);
       } catch (error) {
         console.error('Error fetching portfolio items:', error);
         if (error.response?.status === 401) {
@@ -85,7 +86,7 @@ const Dashboard = () => {
             <div 
               key={item.id} 
               className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200"
-              onClick={() => navigate(`/portfolio/${item._id || item.id}`)}
+              onClick={() => navigate(`/portfolio/${item._id}`)}
             >
               <img
                 src={item.images && item.images.length > 0 

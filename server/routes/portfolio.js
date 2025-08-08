@@ -206,8 +206,7 @@ router.get('/:id', async (req, res) => {
       delete portfolioObj.user._id;
     }
 
-    res.json(portfolioObj , {
-      message: 'Portfolio item fetched successfully'});
+    res.json(portfolioObj);
   } catch (error) {
     console.error('Error fetching portfolio item:', error);
     res.status(400).json({ message: error.message });
