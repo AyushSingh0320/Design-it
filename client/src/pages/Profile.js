@@ -165,9 +165,9 @@ const Profile = () => {
   const hasSocial = socialLinksObj && Object.values(socialLinksObj).some(v => (v || '').toString().trim() !== '');
   
   // Debug logging
-  console.log('user.socialLinks:', user.socialLinks);
-  console.log('socialLinksObj:', socialLinksObj);
-  console.log('hasSocial:', hasSocial);
+  // console.log('user.socialLinks:', user.socialLinks);
+  // console.log('socialLinksObj:', socialLinksObj);
+  // console.log('hasSocial:', hasSocial);
 
   return (
     <div className="max-w-4xl mx-auto p-4">
