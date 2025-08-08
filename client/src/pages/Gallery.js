@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axios';
 import { toast } from 'react-hot-toast';
 
+// Helper function to get full image URL
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return 'https://via.placeholder.com/40';
+  if (imagePath.startsWith('http')) return imagePath;
+  // Normalize backslashes and ensure leading slash
+  const normalized = `/${imagePath}`.replace(/\\\\/g, '/').replace(/\/+/, '/');
+  return `http://localhost:5000${normalized}`;
+};
+
 const categories = [
   { id: 'all', name: 'All' },
   { id: 'UI/UX', name: 'UI/UX' },
@@ -152,9 +161,9 @@ const Gallery = () => {
               <p className="text-gray-200 mb-4">{item.description}</p>
               <div className="flex items-center mb-4">
                 <img
-                  src={item.user?.profileImage || 'https://via.placeholder.com/40'}
+                  src={getImageUrl(item.user?.profileImage)}
                   alt={item.user?.name}
-                  className="w-8 h-8 rounded-full mr-2"
+                  className="w-8 h-8 rounded-full mr-2 object-cover"
                 />
                 <span className="text-gray-200">{item.user?.name}</span>
               </div>
