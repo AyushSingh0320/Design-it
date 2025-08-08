@@ -62,9 +62,10 @@ router.patch('/profile', auth, upload.single('profileImage'), async (req, res) =
     
     // Handle profile image upload
     if (req.file) {
-      updates.profileImage = req.file.path
+      // Store a normalized web path with leading slash and forward slashes
+      const normalized = `/uploads/${req.file.filename}`;
+      updates.profileImage = normalized;
     }
-    console.log(req.file)
 
     // Filter out invalid updates
     Object.keys(updates).forEach(update => {
@@ -75,10 +76,10 @@ router.patch('/profile', auth, upload.single('profileImage'), async (req, res) =
 
     // Handle arrays and objects
     if (updates.skills) {
-      updates.skills = JSON.parse(updates.skills);
+      updates.skills = typeof updates.skills === 'string' ? JSON.parse(updates.skills) : updates.skills;
     }
     if (updates.socialLinks) {
-      updates.socialLinks = JSON.parse(updates.socialLinks);
+      updates.socialLinks = typeof updates.socialLinks === 'string' ? JSON.parse(updates.socialLinks) : updates.socialLinks;
     }
 
     const user = await User.findByIdAndUpdate(
@@ -125,4 +126,4 @@ router.get('/search', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

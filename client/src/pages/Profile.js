@@ -8,7 +8,9 @@ import { toast } from 'react-hot-toast';
 const getImageUrl = (imagePath) => {
   if (!imagePath) return 'https://via.placeholder.com/150';
   if (imagePath.startsWith('http')) return imagePath;
-  return `http://localhost:5000${imagePath}`;
+  // Normalize backslashes and ensure leading slash
+  const normalized = `/${imagePath}`.replace(/\\\\/g, '/').replace(/\/+/, '/');
+  return `http://localhost:5000${normalized}`;
 };
 
 const Profile = () => {
@@ -23,6 +25,20 @@ const Profile = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState('');
   const [removingImage, setRemovingImage] = useState(false);
+  const [skills , setskills] = useState([])
+  const [socialLinks , setsociallinks] = useState({})
+  const [skillInput, setSkillInput] = useState('');
+
+  // Helpers to manage skills
+  const addSkill = () => {
+    const s = skillInput.trim();
+    if (!s) return;
+    if (!skills.includes(s)) 
+     setskills(prev => [...prev, s]);
+    setSkillInput('');
+  };
+  const removeSkill = (idx) => setskills(prev => prev.filter((_, i) => i !== idx));
+  // const removeskill = (skill) => setskills(prev => prev.filter(s => s !== skill));
 
   useEffect(() => {
     const userId = id || currentUser?.id;
@@ -35,6 +51,8 @@ const Profile = () => {
           setUser(response.data);
           setBio(response.data.bio || '');
           setProfileImagePreview(getImageUrl(response.data.profileImage));
+          setskills(response.data.skills || []);
+          setsociallinks(response.data.socialLinks || {});
           setError(null);
         } catch (err) {
           setError('Failed to load profile. Please try again later.');
@@ -64,16 +82,20 @@ const Profile = () => {
     setEditMode(true);
     setBio(user.bio || '');
     setProfileImage(null);
-    setProfileImagePreview(user.profileImage || 'https://via.placeholder.com/150');
+    setProfileImagePreview(getImageUrl(user.profileImage) || 'https://via.placeholder.com/150');
     setRemovingImage(false);
+    setskills(user.skills || []);
+    setsociallinks(user.socialLinks || {});
   };
 
   const handleCancel = () => {
     setEditMode(false);
     setBio(user.bio || '');
     setProfileImage(null);
-    setProfileImagePreview(user.profileImage || 'https://via.placeholder.com/150');
+    setProfileImagePreview(getImageUrl(user.profileImage) || 'https://via.placeholder.com/150');
     setRemovingImage(false);
+     setskills(user.skills || []);
+    setsociallinks(user.socialLinks || {});
   };
 
   const handleImageChange = (e) => {
@@ -101,6 +123,8 @@ const Profile = () => {
       if (removingImage) {
         formData.append('profileImage', ''); // Signal to remove image
       }
+      formData.append('skills', JSON.stringify(skills));
+      formData.append('socialLinks', JSON.stringify(socialLinks));
       await axios.patch('/users/profile', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
@@ -112,6 +136,8 @@ const Profile = () => {
       setBio(response.data.bio || '');
       setProfileImagePreview(getImageUrl(response.data.profileImage));
       setRemovingImage(false);
+      setskills(response.data.skills || []);
+      setsociallinks(response.data.socialLinks || {});
     } catch (err) {
       toast.error('Failed to update profile');
     }
@@ -137,7 +163,7 @@ const Profile = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
             <img
-              src={editMode ? profileImagePreview : getImageUrl(user.profileImage)}
+              src={profileImagePreview}
               alt={user.name}
               className="w-24 h-24 rounded-full object-cover"
             />
@@ -192,6 +218,58 @@ const Profile = () => {
                 </div>
               )}
             </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">Skills</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={skillInput}
+                  onChange={(e) => setSkillInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSkill(); } }}
+                  placeholder="Add a skill and press Enter"
+                  className="flex-1 border rounded p-2"
+                />
+                <button type="button" onClick={addSkill} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                  Add
+                </button>
+              </div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {skills.map((s, idx) => (
+                  <span key={`${s}-${idx}`} className="inline-flex items-center bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-sm">
+                    {s}
+                    <button type="button" onClick={() => removeSkill(idx)} className="ml-2 text-red-600 hover:text-red-800">×</button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">Social Links</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Website</label>
+                  <input
+                    type="url"
+                    value={socialLinks.website || ''}
+                    onChange={(e) => setsociallinks(prev => ({ ...prev, website: e.target.value }))}
+                    placeholder="https://your-site.com"
+                    className="w-full border rounded p-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">LinkedIn</label>
+                  <input
+                    type="url"
+                    value={socialLinks.linkedin || ''}
+                    onChange={(e) => setsociallinks(prev => ({ ...prev, linkedin: e.target.value }))}
+                    placeholder="https://linkedin.com/in/username"
+                    className="w-full border rounded p-2"
+                  />
+                </div>
+          
+              </div>
+            </div>
+
             <div className="flex space-x-2">
               <button
                 onClick={handleSave}
@@ -212,30 +290,34 @@ const Profile = () => {
             <h2 className="text-xl font-semibold mb-2">About</h2>
             <p className="text-gray-700">{user.bio || 'No bio available'}</p>
           </div>
+
+        )}
+
+         <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2">Skills</h2>
+            <p className="text-gray-700">{user.skills.join(', ') || 'No skills available'}</p>
+          </div>
+
+          {!user.socialLinks && (
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2">Social Links</h2>
+            <p className="text-gray-700">{'No social links available'}</p>
+          </div>
         )}
 
         {user.socialLinks && (
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-2">Social Links</h2>
             <div className="flex space-x-4">
-              {user.socialLinks.github && (
-                <a
-                  href={user.socialLinks.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  GitHub
-                </a>
-              )}
               {user.socialLinks.linkedin && (
                 <a
+                  value={user.socialLinks.linkedin}
                   href={user.socialLinks.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 hover:text-gray-900"
                 >
-                  LinkedIn
+                LinkedIn
                 </a>
               )}
               {user.socialLinks.website && (
@@ -251,28 +333,9 @@ const Profile = () => {
             </div>
           </div>
         )}
-
-        <div>
-          <h2 className="text-xl font-semibold mb-2">Portfolio Items</h2>
-          {user.portfolioItems?.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {user.portfolioItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="border rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <h3 className="font-semibold">{item.title}</h3>
-                  <p className="text-gray-600 text-sm">{item.description}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-600">No portfolio items available</p>
-          )}
-        </div>
       </div>
     </div>
   );
 };
 
-export default Profile; 
+export default Profile;
