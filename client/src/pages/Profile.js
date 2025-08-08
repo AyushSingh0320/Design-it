@@ -259,7 +259,7 @@ const Profile = () => {
               <label className="block text-gray-700 font-medium mb-2">Social Links</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Website</label>
+                  <label className="block text-sm text-gray-600 mb-1">Portfolio Website</label>
                   <input
                     type="url"
                     value={socialLinks.website || ''}
