@@ -368,9 +368,15 @@ const Profile = () => {
                     </a>
                   </div>
                 )}
+                
               </div>
             </div>
           )}
+          <div>
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-2">Total No of likes on your Portfolios : </h2>
+            </div>
+          </div>
       </div>
     </div>
   );
