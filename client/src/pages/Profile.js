@@ -52,7 +52,13 @@ const Profile = () => {
           setBio(response.data.bio || '');
           setProfileImagePreview(getImageUrl(response.data.profileImage));
           setskills(response.data.skills || []);
-          setsociallinks(response.data.socialLinks || {});
+          
+          // Handle socialLinks properly whether it's array or object
+          const socialLinksData = Array.isArray(response.data.socialLinks) && response.data.socialLinks.length > 0 
+            ? response.data.socialLinks[0] 
+            : response.data.socialLinks || {};
+          setsociallinks(socialLinksData);
+          
           setError(null);
         } catch (err) {
           setError('Failed to load profile. Please try again later.');
@@ -85,7 +91,12 @@ const Profile = () => {
     setProfileImagePreview(getImageUrl(user.profileImage) || 'https://via.placeholder.com/150');
     setRemovingImage(false);
     setskills(user.skills || []);
-    setsociallinks(user.socialLinks || {});
+    
+    // Handle socialLinks properly whether it's array or object
+    const socialLinksObj = Array.isArray(user.socialLinks) && user.socialLinks.length > 0 
+      ? user.socialLinks[0] 
+      : user.socialLinks || {};
+    setsociallinks(socialLinksObj);
   };
 
   const handleCancel = () => {
@@ -94,8 +105,13 @@ const Profile = () => {
     setProfileImage(null);
     setProfileImagePreview(getImageUrl(user.profileImage) || 'https://via.placeholder.com/150');
     setRemovingImage(false);
-     setskills(user.skills || []);
-    setsociallinks(user.socialLinks || {});
+    setskills(user.skills || []);
+    
+    // Handle socialLinks properly whether it's array or object
+    const socialLinksObj = Array.isArray(user.socialLinks) && user.socialLinks.length > 0 
+      ? user.socialLinks[0] 
+      : user.socialLinks || {};
+    setsociallinks(socialLinksObj);
   };
 
   const handleImageChange = (e) => {
@@ -137,7 +153,12 @@ const Profile = () => {
       setProfileImagePreview(getImageUrl(response.data.profileImage));
       setRemovingImage(false);
       setskills(response.data.skills || []);
-      setsociallinks(response.data.socialLinks || {});
+      
+      // Handle socialLinks properly whether it's array or object
+      const socialLinksData = Array.isArray(response.data.socialLinks) && response.data.socialLinks.length > 0 
+        ? response.data.socialLinks[0] 
+        : response.data.socialLinks || {};
+      setsociallinks(socialLinksData);
     } catch (err) {
       toast.error('Failed to update profile');
     }
@@ -320,28 +341,33 @@ const Profile = () => {
           {hasSocial && (
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-2">Social Links</h2>
-              <div className="flex space-x-4">
-                {socialLinksObj?.linkedin && (
-                  <a
-                    href={socialLinksObj.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 underline"
-                  >
-                    LinkedIn
-                  </a>
-                )}
+              <div className="space-y-2">
                 {socialLinksObj?.website && (
-                  <a
-                    href={socialLinksObj.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 underline"
-                  >
-                    Portfolio Website
-                  </a>
+                  <div>
+                    <a
+                      href={socialLinksObj.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 underline"
+                    >
+                      Portfolio Website
+                    </a>
+                  </div>
                 )}
                 
+                {socialLinksObj?.linkedin && (
+                  <div>
+                    <h3 className="text-lg font-medium mb-1">Connect me on:</h3>
+                    <a
+                      href={socialLinksObj.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 underline"
+                    >
+                      LinkedIn
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           )}
