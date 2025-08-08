@@ -11,6 +11,7 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const portfolioRoutes = require('./routes/portfolio');
 const collaborationRoutes = require('./routes/collaboration');
+const likeRoutes = require('./routes/like')
 
 const app = express();
 
@@ -37,7 +38,8 @@ app.get('/', (req, res) => {
       auth: '/api/auth',
       users: '/api/users',
       portfolio: '/api/portfolio',
-      collaboration: '/api/collaboration'
+      collaboration: '/api/collaboration',
+      likes : '/api/likes'
     }
   });
 });
@@ -52,6 +54,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/collaboration', collaborationRoutes);
+app.use('/api/likes' , likeRoutes)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
