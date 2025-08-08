@@ -30,14 +30,20 @@ const userSchema = new mongoose.Schema({
   },
   skills: [{
     type: String,
-    trim: true
+    trim: true,
+    default: ''
   }],
-  socialLinks: {
-    website: String,
-    behance: String,
-    dribbble: String,
-    linkedin: String
-  },
+  socialLinks: [{
+    website: {
+      type: String,
+      default: ''
+    },
+    linkedin: {
+      type: String,
+      default: ''
+    }
+}],
+  
   createdAt: {
     type: Date,
     default: Date.now

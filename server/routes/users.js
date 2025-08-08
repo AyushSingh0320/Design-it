@@ -62,8 +62,9 @@ router.patch('/profile', auth, upload.single('profileImage'), async (req, res) =
     
     // Handle profile image upload
     if (req.file) {
-      updates.profileImage = `/uploads/${req.file.filename}`;
+      updates.profileImage = req.file.path
     }
+    console.log(req.file)
 
     // Filter out invalid updates
     Object.keys(updates).forEach(update => {
