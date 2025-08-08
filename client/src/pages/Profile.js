@@ -278,26 +278,7 @@ const Profile = () => {
                     className="w-full border rounded p-2"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Behance</label>
-                  <input
-                    type="url"
-                    value={socialLinks.behance || ''}
-                    onChange={(e) => setsociallinks(prev => ({ ...prev, behance: e.target.value }))}
-                    placeholder="https://behance.net/username"
-                    className="w-full border rounded p-2"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Dribbble</label>
-                  <input
-                    type="url"
-                    value={socialLinks.dribbble || ''}
-                    onChange={(e) => setsociallinks(prev => ({ ...prev, dribbble: e.target.value }))}
-                    placeholder="https://dribbble.com/username"
-                    className="w-full border rounded p-2"
-                  />
-                </div>
+              
               </div>
             </div>
 
@@ -360,26 +341,7 @@ const Profile = () => {
                     Portfolio Website
                   </a>
                 )}
-                {socialLinksObj?.behance && (
-                  <a
-                    href={socialLinksObj.behance}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 underline"
-                  >
-                    Behance
-                  </a>
-                )}
-                {socialLinksObj?.dribbble && (
-                  <a
-                    href={socialLinksObj.dribbble}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 underline"
-                  >
-                    Dribbble
-                  </a>
-                )}
+                
               </div>
             </div>
           )}
