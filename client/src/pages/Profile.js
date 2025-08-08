@@ -156,6 +156,18 @@ const Profile = () => {
   }
 
   const isOwnProfile = currentUser?.id === user.id;
+  
+  // Handle socialLinks whether it's an array or object
+  const socialLinksObj = Array.isArray(user.socialLinks) && user.socialLinks.length > 0 
+    ? user.socialLinks[0] 
+    : user.socialLinks || {};
+  
+  const hasSocial = socialLinksObj && Object.values(socialLinksObj).some(v => (v || '').toString().trim() !== '');
+  
+  // Debug logging
+  console.log('user.socialLinks:', user.socialLinks);
+  console.log('socialLinksObj:', socialLinksObj);
+  console.log('hasSocial:', hasSocial);
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -266,7 +278,26 @@ const Profile = () => {
                     className="w-full border rounded p-2"
                   />
                 </div>
-          
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Behance</label>
+                  <input
+                    type="url"
+                    value={socialLinks.behance || ''}
+                    onChange={(e) => setsociallinks(prev => ({ ...prev, behance: e.target.value }))}
+                    placeholder="https://behance.net/username"
+                    className="w-full border rounded p-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Dribbble</label>
+                  <input
+                    type="url"
+                    value={socialLinks.dribbble || ''}
+                    onChange={(e) => setsociallinks(prev => ({ ...prev, dribbble: e.target.value }))}
+                    placeholder="https://dribbble.com/username"
+                    className="w-full border rounded p-2"
+                  />
+                </div>
               </div>
             </div>
 
@@ -298,41 +329,60 @@ const Profile = () => {
             <p className="text-gray-700">{user.skills.join(', ') || 'No skills available'}</p>
           </div>
 
-          {!user.socialLinks && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Social Links</h2>
-            <p className="text-gray-700">{'No social links available'}</p>
-          </div>
-        )}
-
-        {user.socialLinks && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Social Links</h2>
-            <div className="flex space-x-4">
-              {user.socialLinks.linkedin && (
-                <a
-                  value={user.socialLinks.linkedin}
-                  href={user.socialLinks.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                LinkedIn
-                </a>
-              )}
-              {user.socialLinks.website && (
-                <a
-                  href={user.socialLinks.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Website
-                </a>
-              )}
+          {!hasSocial && (
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-2">Social Links</h2>
+              <p className="text-gray-700">No social links available</p>
             </div>
-          </div>
-        )}
+          )}
+
+          {hasSocial && (
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-2">Social Links</h2>
+              <div className="flex space-x-4">
+                {socialLinksObj?.linkedin && (
+                  <a
+                    href={socialLinksObj.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline"
+                  >
+                    LinkedIn
+                  </a>
+                )}
+                {socialLinksObj?.website && (
+                  <a
+                    href={socialLinksObj.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Portfolio Website
+                  </a>
+                )}
+                {socialLinksObj?.behance && (
+                  <a
+                    href={socialLinksObj.behance}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Behance
+                  </a>
+                )}
+                {socialLinksObj?.dribbble && (
+                  <a
+                    href={socialLinksObj.dribbble}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Dribbble
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );
