@@ -23,27 +23,30 @@ router.post('/:portfolioid', auth, async (req, res) => {
       Likedby: user
     });
 
-    if (existingLike) {
+    if (existingLike.length > 0) {
       await Like.deleteMany({
         likedPortfolio : portfolioid,
         Likedby : user
-      })
+      });
+      return res.status(200).json({"message" : "Like deleted successfully"});
     }
 
-    const createlikedata = await Like.create({
-      likedPortfolio: portfolioid,
-      Likedby: user
-    });
+    else {
+      const createlikedata = await Like.create({
+        likedPortfolio: portfolioid,
+        Likedby: user
+      });
 
-    const likedata = await Like.findById(createlikedata._id)
-    //   .populate('likedPortfolio')
-    //   .populate('Likedby', 'name email');
+      const likedata = await Like.findById(createlikedata._id);
+      //   .populate('likedPortfolio')
+      //   .populate('Likedby', 'name email');
 
-    if (!likedata) {
-      return res.status(500).json({ message: "Data not found" });
-    }
+      if (!likedata) {
+        return res.status(500).json({ message: "Data not found" });
+      }
 
-    res.status(200).json(likedata);
+      return res.status(200).json(likedata);
+    };
   } catch (error) {
     console.error('Error creating like:', error);
     res.status(500).json({ message: error.message });
@@ -66,9 +69,10 @@ router.get('/' , auth , async (req , res) => {
 }) 
 
  
+// getting all liked portfolios 
 
+//get all the liked portfolios by a paticula user 
 
-router.put("/toggle")
 
 
 module.exports = router;
