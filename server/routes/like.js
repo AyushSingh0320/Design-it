@@ -29,7 +29,7 @@ router.post('/:portfolioid', auth, async (req, res) => {
         Likedby : user
       })
     }
-    
+
     const createlikedata = await Like.create({
       likedPortfolio: portfolioid,
       Likedby: user
@@ -65,11 +65,7 @@ router.get('/' , auth , async (req , res) => {
     }
 }) 
 
-// Toggle the like 
-//1. somehoe take the user id and portfolio id from the user !
-//2. check that user wth that id exist or not 
-//3. check the document with this user id an portfoio is present or not 
-//4, if present then delete from database 
+ 
 
 
 router.put("/toggle")
