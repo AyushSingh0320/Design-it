@@ -28,6 +28,7 @@ const Profile = () => {
   const [skills , setskills] = useState([])
   const [socialLinks , setsociallinks] = useState({})
   const [skillInput, setSkillInput] = useState('');
+  const [portfolioCount, setPortfolioCount] = useState(0);
 
   // Helpers to manage skills
   const addSkill = () => {
@@ -73,6 +74,25 @@ const Profile = () => {
       navigate('/login');
     }
   }, [id, currentUser, authLoading, navigate]);
+
+  // Fetch portfolio count when user data is loaded and it's own profile
+  useEffect(() => {
+    const fetchPortfolioCount = async () => {
+      if (user && currentUser?.id === user.id) {
+        try {
+          const response = await axios.get('/users/userdata');
+          console.log(response)
+          if (response.data && response.data.length > 0) {
+            setPortfolioCount(response.data[0].Portfoliocount || 0);
+          }
+        } catch (err) {
+          console.error('Failed to fetch portfolio count:', err);
+        }
+      }
+    };
+
+    fetchPortfolioCount();
+  }, [user, currentUser]);
 
   const handleLogout = async () => {
     try {
@@ -372,6 +392,18 @@ const Profile = () => {
               </div>
             </div>
           )}
+          
+          {isOwnProfile && (
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-2">Portfolio Statistics</h2>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-gray-700">
+                  <span className="font-medium">Total Portfolios:</span> {portfolioCount}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div>
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-2">Total No of likes on your Portfolios : </h2>

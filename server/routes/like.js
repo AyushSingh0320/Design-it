@@ -69,9 +69,12 @@ router.get('/' , auth , async (req , res) => {
 }) 
 
  
-// getting all liked portfolios 
+// getting all liked portfolios by the paticular user  
 
-//get all the liked portfolios by a paticula user 
+// get total likes of a paticular user 
+
+// first bring the user by using where clause 
+
 
 
 

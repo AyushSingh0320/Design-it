@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const Portfolio = require('../models/Portfolio');
 
 const router = express.Router();
 
@@ -32,6 +33,51 @@ const upload = multer({
     cb(new Error('Only image files are allowed!'));
   }
 });
+
+
+
+// total number of portfolios of a paticulat user 
+router.get("/userdata" , auth , async (req , res) => {
+    const user = req.user._id
+    if(!user){
+      res.status(404).json({"message" : "User not found"})
+    }
+    const Data = await User.aggregate([{
+        $match : {
+                _id : user
+        }
+        },
+        {
+          $lookup : {
+            from : "portfolios",
+            localField : "_id",
+            foreignField : "user",
+            as : "totalportfolios"
+          }
+        },
+        {
+          $addFields : {
+            Portfoliocount : {
+              $size : "$totalportfolios"
+            }
+          }
+        },
+        {
+          $project : {
+            name: 1,
+            email: 1,
+            bio: 1,
+            profileImage:1,
+            skills:1,
+            socialLinks:1,
+            Portfoliocount: 1
+          }
+        }
+      ])
+   console.log(Data)
+      res.status(200).json(Data)
+
+})
 
 // Get user profile
 router.get('/:id', async (req, res) => {
@@ -125,5 +171,8 @@ router.get('/search', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+
+
 
 module.exports = router;
