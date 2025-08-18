@@ -11,6 +11,27 @@ const PortfolioItem = () => {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [likeLoading, setLikeLoading] = useState(false);
+
+  // // Fetch likes data for this portfolio
+  // const fetchLikesData = useCallback(async () => {
+  //   try {
+  //     const response = await axios.get(`/likes/portfolio/${id}`);
+  //     setLikesCount(response.data.count || 0);
+      
+  //     // Check if current user has liked this portfolio
+  //     if (user && response.data.likes) {
+  //       const userLike = response.data.likes.find(like => like.Likedby._id === user.id);
+  //       setIsLiked(!!userLike);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching likes:', error);
+  //     setLikesCount(0);
+  //     setIsLiked(false);
+  //   }
+  // }, [id, user]);
 
   const fetchPortfolioItem = useCallback(async () => {
     try {
@@ -20,6 +41,9 @@ const PortfolioItem = () => {
       }
       const response = await axios.get(`/portfolio/${id}`);
       setItem(response.data);
+      
+      // Fetch likes data after getting portfolio
+      // await fetchLikesData();
     } catch (error) {
       console.error('Error fetching portfolio item:', error);
       if (error.response?.status === 404) {
@@ -31,7 +55,36 @@ const PortfolioItem = () => {
     } finally {
       setLoading(false);
     }
-  }, [id, navigate]);
+  }, [id, navigate, ]);
+
+  // Handle like/unlike action
+  const handleLikeToggle = async () => {
+    if (!user) {
+      toast.error('Please login to like portfolios');
+      return;
+    }
+
+    setLikeLoading(true);
+    try {
+      await axios.post(`/likes/${id}`);
+      
+      // Toggle the like state and update count
+      if (isLiked) {
+        setIsLiked(false);
+        setLikesCount(prev => prev - 1);
+        toast.success('Portfolio unliked');
+      } else {
+        setIsLiked(true);
+        setLikesCount(prev => prev + 1);
+        toast.success('Portfolio liked');
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast.error('Failed to update like');
+    } finally {
+      setLikeLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchPortfolioItem();
@@ -94,6 +147,37 @@ const PortfolioItem = () => {
                   {item.user.name}
                 </Link>
               </p>
+              
+              {/* Like button and count */}
+              <div className="mt-3 flex items-center space-x-4">
+                <button
+                  onClick={handleLikeToggle}
+                  disabled={likeLoading || !user}
+                  className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
+                    isLiked
+                      ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  } ${(!user || likeLoading) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <svg 
+                    className={`w-4 h-4 ${isLiked ? 'fill-red-500' : 'fill-none stroke-current'}`} 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor" 
+                    strokeWidth="2"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
+                    />
+                  </svg>
+                  <span>{likeLoading ? '...' : likesCount}</span>
+                </button>
+                
+                {!user && (
+                  <span className="text-xs text-gray-500">Login to like</span>
+                )}
+              </div>
             </div>
             {isOwner && (
               <div className="flex space-x-3">
