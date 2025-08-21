@@ -4,6 +4,7 @@ const path = require('path');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 const Portfolio = require('../models/Portfolio');
+const { default: mongoose } = require('mongoose');
 
 const router = express.Router();
 
@@ -78,6 +79,59 @@ router.get("/userdata" , auth , async (req , res) => {
    console.log(Data)
       res.status(200).json(Data)
 
+})
+
+
+// Getting total No of likes 
+
+router.get("/totallikes", auth , async (req , res) => {
+  try {
+    const totallikesdata = await User.aggregate([
+      {
+        $match : {
+          _id : new mongoose.Types.ObjectId(req.user._id)
+        }
+      },
+      {
+        $lookup : {
+          from : "portfolios",
+          localField : "_id",
+          foreignField : "user",
+          as : "portfoliodetails",
+          pipeline : [
+            {
+              $lookup : {
+                from : "likes",
+                localField : "_id",
+                foreignField : "likedPortfolio",
+                as : "likes"
+              }
+            },
+            {
+              $addFields : {
+                likescount : {
+                  $size : "$likes"
+                },
+                totallikescout : {
+                  $sum : "$portfoliodetails.likescount"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        $project : {
+          likescount : 1,
+          totallikescout : 1
+        }
+      }
+    ])
+   return res.status(200).json(totallikesdata[0])
+  } catch (error) {
+    console.error('Error getting total likes count:', error);
+    res.status(500).json({ message: error.message });
+  }
 })
 
 // Get user profile
@@ -172,16 +226,5 @@ router.get('/search', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-
-
-// Getting total No of likes 
-
-router.get("/totallikes", auth , async (req , res) => {
-  try {
-    
-  } catch (error) {
-    
-  }
-})
 
 module.exports = router;
