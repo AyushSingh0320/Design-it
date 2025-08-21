@@ -3,6 +3,7 @@ const Like = require('../models/Like');
 const auth = require('../middleware/auth');
 const router = express.Router();
 const User = require('../models/User');
+const Portfolio = require('../models/Portfolio');
 
 // Method for creating a data of like for a portfolio
 router.post('/:portfolioid', auth, async (req, res) => {
@@ -69,11 +70,44 @@ router.get('/' , auth , async (req , res) => {
 }) 
 
  
-// getting all liked portfolios by the paticular user  
+// getting total no of likes on a paticular portfolio
 
-// get total likes of a paticular user 
-
-// first bring the user by using where clause 
+router.get("/count/:portfolioid" , async (req , res) => {
+  const Portfolioid =  req.params.portfolioid
+  if(!Portfolioid){
+    res.status(404).json({"message" : "Portfolio not found"})
+  }
+   
+  const count =  await Portfolio.aggregate([
+    {
+      $match : {
+             _id : Portfolioid
+      }
+    },
+    {
+       $lookup : {
+            from : "likes",
+            localField : "_id",
+            foreignField : "likedPortfolio",
+            as : "countoflikes"
+          }
+    },
+    {
+      $addFields : {
+        Likescount : {
+          $size : "$countoflikes"
+        }
+      }
+    },
+    {
+      $project : {
+        Likescount : 1
+      }
+    }
+  ])
+console.log(count)
+res.status(200).json(count[0])
+})
 
 
 
