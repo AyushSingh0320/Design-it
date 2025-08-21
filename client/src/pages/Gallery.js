@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axios';
 import { toast } from 'react-hot-toast';
+import { useAuth } from '../contexts/AuthContext';
 
 // Helper function to get full image URL
 const getImageUrl = (imagePath) => {
@@ -24,12 +25,15 @@ const categories = [
 
 const Gallery = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [portfolioItems, setPortfolioItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
+  const [likesData, setLikesData] = useState({});
+  const [likeLoading, setLikeLoading] = useState({});
 
   const fetchPortfolioItems = useCallback(async () => {
     try {
@@ -48,6 +52,42 @@ const Gallery = () => {
       const response = await axios.get(`/portfolio?${params.toString()}`);
       setPortfolioItems(response.data);
       
+      // Fetch likes data for all portfolio items
+      const likesPromises = response.data.map(async (item) => {
+        try {
+          const likesResponse = await axios.get(`/likes/count/${item._id || item.id}`);
+          
+          const isUserLiked = user && likesResponse.data.likes ? 
+            likesResponse.data.likes.some(likeUser => likeUser._id === user.id) : false;
+          
+          return {
+            id: item._id || item.id,
+            count: likesResponse.data.count || 0,
+            isLiked: isUserLiked
+          };
+        } catch (error) {
+          console.error(`Error fetching likes for portfolio ${item._id}:`, error);
+          return {
+            id: item._id || item.id,
+            count: 0,
+            isLiked: false
+          };
+        }
+      });
+    // console.log(likesPromises)
+
+      const likesResults = await Promise.all(likesPromises);
+      const likesDataMap = {};
+      likesResults.forEach(result => {
+        likesDataMap[result.id] = {
+          count: result.count,
+          isLiked: result.isLiked
+        };
+      });
+      setLikesData(likesDataMap);
+      // console.log(likesResults)
+      console.log(likesDataMap)
+      
       // Extract unique tags from all portfolio items
       const tags = new Set();
       response.data.forEach(item => {
@@ -63,10 +103,58 @@ const Gallery = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, searchQuery, selectedTags]);
+  }, [selectedCategory, searchQuery, selectedTags, user]);
+
+  // Handle like/unlike action
+  const handleLikeToggle = async (portfolioId, e) => {
+    e.stopPropagation(); // Prevent navigation when clicking like button
+    
+    if (!user) {
+      toast.error('Please login to like portfolios');
+      return;
+    }
+
+    setLikeLoading(prev => ({ ...prev, [portfolioId]: true }));
+    
+    try {
+      await axios.post(`/likes/${portfolioId}`);
+      
+      // Update likes data
+      setLikesData(prev => {
+        const currentData = prev[portfolioId] || { count: 0, isLiked: false };
+        return {
+          ...prev,
+          [portfolioId]: {
+            count: currentData.isLiked ? currentData.count - 1 : currentData.count + 1,
+            isLiked: !currentData.isLiked
+          }
+        };
+      });
+
+      const currentData = likesData[portfolioId] || { count: 0, isLiked: false };
+      toast.success(currentData.isLiked ? 'Portfolio unliked' : 'Portfolio liked');
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast.error('Failed to update like');
+    } finally {
+      setLikeLoading(prev => ({ ...prev, [portfolioId]: false }));
+    }
+  };
 
   useEffect(() => {
     fetchPortfolioItems();
+  }, [fetchPortfolioItems]);
+
+  // Re-fetch data when page becomes visible (user navigates back from portfolio detail)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchPortfolioItems();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [fetchPortfolioItems]);
 
   const handleTagToggle = (tag) => {
@@ -143,43 +231,89 @@ const Gallery = () => {
 
       {/* Portfolio Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {portfolioItems.map(item => (
-          <div 
-            key={item.id} 
-            className="bg-black/30 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl hover:bg-black/40 transition-all duration-200 border border-white/10"
-            onClick={() => navigate(`/portfolio/${item._id || item.id}`)}
-          >
-            <img
-              src={item.images && item.images.length > 0 
-                ? `http://localhost:5000${item.images[0].url}` 
-                : 'https://via.placeholder.com/400x300?text=No+Image'}
-              alt={item.title}
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-4">
-              <h2 className="text-xl font-semibold mb-2 text-white">{item.title}</h2>
-              <p className="text-gray-200 mb-4">{item.description}</p>
-              <div className="flex items-center mb-4">
+        {portfolioItems.map(item => {
+          const portfolioId = item._id || item.id;
+          const itemLikesData = likesData[portfolioId] || { count: 0, isLiked: false };
+          const isLikeLoading = likeLoading[portfolioId] || false;
+          
+          return (
+            <div 
+              key={portfolioId} 
+              className="bg-black/30 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden hover:shadow-xl hover:bg-black/40 transition-all duration-200 border border-white/10"
+            >
+              <div 
+                className="cursor-pointer"
+                onClick={() => navigate(`/portfolio/${portfolioId}`)}
+              >
                 <img
-                  src={getImageUrl(item.user?.profileImage)}
-                  alt={item.user?.name}
-                  className="w-8 h-8 rounded-full mr-2 object-cover"
+                  src={item.images && item.images.length > 0 
+                    ? `http://localhost:5000${item.images[0].url}` 
+                    : 'https://via.placeholder.com/400x300?text=No+Image'}
+                  alt={item.title}
+                  className="w-full h-48 object-cover"
                 />
-                <span className="text-gray-200">{item.user?.name}</span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {item.tags?.map(tag => (
-                  <span
-                    key={tag}
-                    className="bg-white/20 text-white px-2 py-1 rounded-full text-sm backdrop-blur-sm"
+              <div className="p-4">
+                <div 
+                  className="cursor-pointer"
+                  onClick={() => navigate(`/portfolio/${portfolioId}`)}
+                >
+                  <h2 className="text-xl font-semibold mb-2 text-white">{item.title}</h2>
+                  <p className="text-gray-200 mb-4">{item.description}</p>
+                  <div className="flex items-center mb-4">
+                    <img
+                      src={getImageUrl(item.user?.profileImage)}
+                      alt={item.user?.name}
+                      className="w-8 h-8 rounded-full mr-2 object-cover"
+                    />
+                    <span className="text-gray-200">{item.user?.name}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {item.tags?.map(tag => (
+                      <span
+                        key={tag}
+                        className="bg-white/20 text-white px-2 py-1 rounded-full text-sm backdrop-blur-sm"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Like button */}
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={(e) => handleLikeToggle(portfolioId, e)}
+                    disabled={isLikeLoading || !user}
+                    className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
+                      itemLikesData.isLiked
+                        ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                        : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                    } ${(!user || isLikeLoading) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                   >
-                    {tag}
-                  </span>
-                ))}
+                    <svg 
+                      className={`w-4 h-4 ${itemLikesData.isLiked ? 'fill-red-400' : 'fill-none stroke-current'}`} 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor" 
+                      strokeWidth="2"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
+                      />
+                    </svg>
+                    <span>{isLikeLoading ? '...' : itemLikesData.count}</span>
+                  </button>
+                  
+                  {!user && (
+                    <span className="text-xs text-gray-400">Login to like</span>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {portfolioItems.length === 0 && (

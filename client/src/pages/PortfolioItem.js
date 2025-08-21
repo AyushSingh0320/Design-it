@@ -15,23 +15,23 @@ const PortfolioItem = () => {
   const [likesCount, setLikesCount] = useState(0);
   const [likeLoading, setLikeLoading] = useState(false);
 
-  // // Fetch likes data for this portfolio
-  // const fetchLikesData = useCallback(async () => {
-  //   try {
-  //     const response = await axios.get(`/likes/portfolio/${id}`);
-  //     setLikesCount(response.data.count || 0);
+  // Fetch likes data for this portfolio
+  const fetchLikesData = useCallback(async () => {
+    try {
+      const response = await axios.get(`/likes/count/${id}`);
+      setLikesCount(response.data.count || 0);
       
-  //     // Check if current user has liked this portfolio
-  //     if (user && response.data.likes) {
-  //       const userLike = response.data.likes.find(like => like.Likedby._id === user.id);
-  //       setIsLiked(!!userLike);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching likes:', error);
-  //     setLikesCount(0);
-  //     setIsLiked(false);
-  //   }
-  // }, [id, user]);
+      // Check if current user has liked this portfolio
+      if (user && response.data.likes) {
+        const userLike = response.data.likes.find(like => like._id === user.id);
+        setIsLiked(!!userLike);
+      }
+    } catch (error) {
+      console.error('Error fetching likes:', error);
+      setLikesCount(0);
+      setIsLiked(false);
+    }
+  }, [id, user]);
 
   const fetchPortfolioItem = useCallback(async () => {
     try {
@@ -43,7 +43,7 @@ const PortfolioItem = () => {
       setItem(response.data);
       
       // Fetch likes data after getting portfolio
-      // await fetchLikesData();
+     await fetchLikesData();
     } catch (error) {
       console.error('Error fetching portfolio item:', error);
       if (error.response?.status === 404) {
@@ -55,7 +55,7 @@ const PortfolioItem = () => {
     } finally {
       setLoading(false);
     }
-  }, [id, navigate, ]);
+  }, [id, navigate, fetchLikesData]);
 
   // Handle like/unlike action
   const handleLikeToggle = async () => {

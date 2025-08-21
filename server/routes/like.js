@@ -70,44 +70,78 @@ router.get('/' , auth , async (req , res) => {
 }) 
 
  
-// getting total no of likes on a paticular portfolio
+// getting total no of likes on a particular portfolio
+router.get("/count/:portfolioid", async (req, res) => {
+  try {
+    const { portfolioid } = req.params;
+    
+    if (!portfolioid) {
+      return res.status(404).json({ "message": "Portfolio ID not provided" });
+    }
 
-router.get("/count/:portfolioid" , async (req , res) => {
-  const Portfolioid =  req.params.portfolioid
-  if(!Portfolioid){
-    res.status(404).json({"message" : "Portfolio not found"})
-  }
-   
-  const count =  await Portfolio.aggregate([
-    {
-      $match : {
-             _id : Portfolioid
-      }
-    },
-    {
-       $lookup : {
-            from : "likes",
-            localField : "_id",
-            foreignField : "likedPortfolio",
-            as : "countoflikes"
+    // Convert string to ObjectId for MongoDB query
+    const mongoose = require('mongoose');
+    const portfolioObjectId = new mongoose.Types.ObjectId(portfolioid);
+
+    const count = await Portfolio.aggregate([
+      {
+        $match: {
+          _id: portfolioObjectId
+        }
+      },
+      {
+        $lookup: {
+          from: "likes",
+          localField: "_id",
+          foreignField: "likedPortfolio",
+          as: "countoflikes"
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "countoflikes.Likedby",
+          foreignField: "_id",
+          as: "likedbyUsers"
+        }
+      },
+      {
+        $addFields: {
+          count: {
+            $size: "$countoflikes"
+          },
+          likes: {
+            $map: {
+              input: "$likedbyUsers",
+              as: "user",
+              in: {
+                _id: "$$user._id",
+                name: "$$user.name",
+              }
+            }
           }
-    },
-    {
-      $addFields : {
-        Likescount : {
-          $size : "$countoflikes"
+        }
+      },
+      {
+        $project: {
+          count: 1,
+          likes: 1
+          
         }
       }
-    },
-    {
-      $project : {
-        Likescount : 1
-      }
+    ]);
+
+    if (count.length === 0) {
+      return res.status(404).json({ "message": "Portfolio not found" });
     }
-  ])
-console.log(count)
-res.status(200).json(count[0])
-})
+
+    console.log(count);
+    return res.status(200).json(count[0]);
+  } catch (error) {
+    console.error('Error getting like count:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
 
 
