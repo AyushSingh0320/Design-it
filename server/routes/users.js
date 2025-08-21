@@ -111,9 +111,6 @@ router.get("/totallikes", auth , async (req , res) => {
               $addFields : {
                 likescount : {
                   $size : "$likes"
-                },
-                totallikescout : {
-                  $sum : "$portfoliodetails.likescount"
                 }
               }
             }
@@ -121,9 +118,15 @@ router.get("/totallikes", auth , async (req , res) => {
         }
       },
       {
+  $addFields: {
+    totalLikes: { 
+      $sum: "$portfoliodetails.likescount" 
+    }  
+  }
+    },
+      {
         $project : {
-          likescount : 1,
-          totallikescout : 1
+          totalLikes : 1
         }
       }
     ])

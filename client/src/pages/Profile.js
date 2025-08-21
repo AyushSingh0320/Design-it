@@ -29,6 +29,7 @@ const Profile = () => {
   const [socialLinks , setsociallinks] = useState({})
   const [skillInput, setSkillInput] = useState('');
   const [portfolioCount, setPortfolioCount] = useState(0);
+  const [totalLikes, setTotalLikes] = useState(0);
 
   // Helpers to manage skills
   const addSkill = () => {
@@ -92,6 +93,26 @@ const Profile = () => {
     };
 
     fetchPortfolioCount();
+  }, [user, currentUser]);
+
+  // Fetch total likes when user data is loaded and it's own profile
+  useEffect(() => {
+    const fetchTotalLikes = async () => {
+      if (user && currentUser?.id === user.id) {
+        try {
+          const response = await axios.get('/users/totallikes');
+          console.log('Total likes response:', response.data);
+          if (response.data) {
+            setTotalLikes(response.data.totalLikes || 0);
+          }
+        } catch (err) {
+          console.error('Failed to fetch total likes:', err);
+          setTotalLikes(0); // Set to 0 if API fails
+        }
+      }
+    };
+
+    fetchTotalLikes();
   }, [user, currentUser]);
 
   const handleLogout = async () => {
@@ -396,19 +417,17 @@ const Profile = () => {
           {isOwnProfile && (
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-2">Portfolio Statistics</h2>
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="bg-gray-50 p-4 rounded-lg space-y-2">
                 <p className="text-gray-700">
                   <span className="font-medium">Total Portfolios:</span> {portfolioCount}
+                </p>
+                <p className="text-gray-700">
+                  <span className="font-medium">Total Likes Received:</span> {totalLikes}
                 </p>
               </div>
             </div>
           )}
 
-          <div>
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">Total No of likes on your Portfolios : </h2>
-            </div>
-          </div>
       </div>
     </div>
   );
