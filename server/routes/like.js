@@ -71,6 +71,7 @@ router.get('/' , auth , async (req , res) => {
 
  
 // getting total no of likes on a particular portfolio
+
 router.get("/count/:portfolioid", async (req, res) => {
   try {
     const { portfolioid } = req.params;

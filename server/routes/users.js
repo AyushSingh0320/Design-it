@@ -37,6 +37,7 @@ const upload = multer({
 
 
 // total number of portfolios of a paticulat user 
+
 router.get("/userdata" , auth , async (req , res) => {
     const user = req.user._id
     if(!user){
@@ -89,11 +90,11 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Transform _id to id for consistency
+    // Transform _id to id for consistency  
     const userObj = user.toObject();
     userObj.id = userObj._id;
     delete userObj._id;
-
+    
     res.json(userObj);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -173,6 +174,14 @@ router.get('/search', async (req, res) => {
 });
 
 
+// Getting total No of likes 
 
+router.get("/totallikes", auth , async (req , res) => {
+  try {
+    
+  } catch (error) {
+    
+  }
+})
 
 module.exports = router;
