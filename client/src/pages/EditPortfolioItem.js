@@ -141,7 +141,7 @@ const EditPortfolioItem = () => {
       
       <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
         <div className="mb-6">
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="title" className="block text-sm font-medium text-rose-100 mb-2">
             Title
           </label>
           <input
