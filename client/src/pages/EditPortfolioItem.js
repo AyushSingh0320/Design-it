@@ -173,7 +173,7 @@ const EditPortfolioItem = () => {
         {/* Existing Images */}
         {existingImages.length > 0 && (
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-rose-100 mb-2">
               Current Images
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
