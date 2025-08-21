@@ -216,7 +216,7 @@ const CreatePortfolioItem = () => {
               onChange={(e) => setFormData(prev => ({ ...prev, isPublic: e.target.checked }))}
               className="mr-2"
             />
-            <span className="text-sm font-medium text-gray-700">Make this portfolio item public</span>
+            <span className="text-sm font-medium text-rose-100">Make this portfolio item public</span>
           </label>
         </div>
 
