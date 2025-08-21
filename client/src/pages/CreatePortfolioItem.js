@@ -172,7 +172,7 @@ const CreatePortfolioItem = () => {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="category" className="block text-sm font-medium text-rose-100 mb-2">
             Category
           </label>
           <select
