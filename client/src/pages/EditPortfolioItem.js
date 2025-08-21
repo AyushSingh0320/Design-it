@@ -137,7 +137,7 @@ const EditPortfolioItem = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Edit Portfolio Item</h1>
+      <h1 className="text-3xl font-bold mb-8 text-rose-100">Edit Portfolio Item</h1>
       
       <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
         <div className="mb-6">
