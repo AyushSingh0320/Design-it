@@ -248,7 +248,7 @@ const EditPortfolioItem = () => {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="tags" className="block text-sm font-medium text-rose-100 mb-2">
             Tags (comma-separated)
           </label>
           <input
