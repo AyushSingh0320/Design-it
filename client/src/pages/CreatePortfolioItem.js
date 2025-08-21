@@ -128,7 +128,7 @@ const CreatePortfolioItem = () => {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="description" className="block text-sm font-medium text-rose-100 mb-2">
             Description
           </label>
           <textarea
