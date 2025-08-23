@@ -40,7 +40,7 @@ const upload = multer({
 // total number of portfolios of a paticulat user 
 
 router.get("/userdata" , auth , async (req , res) => {
-    const user = req.user._id
+    const user = new mongoose.Types.ObjectId(req.user._id)
     if(!user){
       res.status(404).json({"message" : "User not found"})
     }
