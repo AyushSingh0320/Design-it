@@ -19,19 +19,6 @@ const collaborationSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  budget: {
-    type: String,
-    required: true
-  },
-  deadline: {
-    type: Date,
-    required: true
-  },
-  status: {
-    type: String,
-    enum: ['pending', 'accepted', 'rejected'],
-    default: 'pending'
-  }
 }, {
   timestamps: true
 });
