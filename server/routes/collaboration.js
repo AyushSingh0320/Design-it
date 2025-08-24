@@ -7,18 +7,33 @@ const router = express.Router();
 // Send collaboration request
 router.post('/', auth, async (req, res) => {
   try {
-    const sender = req.user._id
+    const sender = req.user._id;
     if(!sender){
-      res.status(404).json({"message" : "Unauthorized User"})
+      return res.status(401).json({"message" : "Unauthorized User"});
+    }
+    
+    const { receiver, portfolioItem } = req.body;
+    console.log('Request body:', req.body);
+    console.log('Sender:', sender);
+    console.log('Receiver:', receiver);
+    console.log('Portfolio Item:', portfolioItem);
+    
+    if(!receiver || !portfolioItem){
+      return res.status(400).json({"message" : "Receiver and portfolioItem are required"});
     }
 
     const collaboration = new Collaboration({
-      sender
+      sender,
+      portfolioItem,
+      receiver, 
+      status: "pending"
     });
 
+    console.log('Collaboration object before save:', collaboration);
     await collaboration.save();
     res.status(201).json(collaboration);
   } catch (error) {
+    console.error('Collaboration creation error:', error);
     res.status(400).json({ message: error.message });
   }
 });
@@ -30,6 +45,9 @@ router.get('/received', auth, async (req, res) => {
       .populate('sender', 'name profileImage')
       .sort({ createdAt: -1 });
 
+if(!collaborations){
+  res.status(410).json({"message" : "request no found"})
+}
     // Transform user._id to user.id for consistency
     const transformedCollaborations = collaborations.map(collaboration => {
       const collaborationObj = collaboration.toObject();
@@ -40,34 +58,34 @@ router.get('/received', auth, async (req, res) => {
       return collaborationObj;
     });
 
-    res.json(transformedCollaborations);
+    return res.json(transformedCollaborations);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
 
 // Get sent collaboration requests
-router.get('/sent', auth, async (req, res) => {
-  try {
-    const collaborations = await Collaboration.find({ sender: req.user._id })
-      .populate('receiver', 'name profileImage')
-      .sort({ createdAt: -1 });
+// router.get('/sent', auth, async (req, res) => {
+//   try {
+//     const collaborations = await Collaboration.find({ sender: req.user._id })
+//       .populate('receiver', 'name profileImage')
+//       .sort({ createdAt: -1 });
 
-    // Transform user._id to user.id for consistency
-    const transformedCollaborations = collaborations.map(collaboration => {
-      const collaborationObj = collaboration.toObject();
-      if (collaborationObj.receiver) {
-        collaborationObj.receiver.id = collaborationObj.receiver._id;
-        delete collaborationObj.receiver._id;
-      }
-      return collaborationObj;
-    });
+//     // Transform user._id to user.id for consistency
+//     const transformedCollaborations = collaborations.map(collaboration => {
+//       const collaborationObj = collaboration.toObject();
+//       if (collaborationObj.receiver) {
+//         collaborationObj.receiver.id = collaborationObj.receiver._id;
+//         delete collaborationObj.receiver._id;
+//       }
+//       return collaborationObj;
+//     });
 
-    res.json(transformedCollaborations);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+//     res.json(transformedCollaborations);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// });
 
 // Update collaboration request status
 router.patch('/:id', auth, async (req, res) => {
