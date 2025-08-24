@@ -7,16 +7,13 @@ const router = express.Router();
 // Send collaboration request
 router.post('/', auth, async (req, res) => {
   try {
-    const { title, description, budget, deadline, portfolioItem } = req.body;
+    const sender = req.user._id
+    if(!sender){
+      res.status(404).json({"message" : "Unauthorized User"})
+    }
 
     const collaboration = new Collaboration({
-      sender: req.user._id,
-      portfolioItem,
-      title,
-      description,
-      budget,
-      deadline,
-      status: 'pending'
+      sender
     });
 
     await collaboration.save();
