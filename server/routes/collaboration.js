@@ -36,7 +36,23 @@ router.post('/', auth, async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-
+// GETTING THE REQUEST DATA 
+router.get("/:id" , async  (req,res) => {
+  try {
+    const collabid = req.params.id
+    if(!collabid){
+     return res.status(404).json({"message" : "Id not found"})
+    }
+    const requestdata = await Collaboration.findById(collabid)
+    if(!requestdata){
+      return res.status(404).json({"message" : "There is no request with this id"})
+    }
+   return  res.status(200).json(requestdata)
+  } catch (error) {
+    console.error("Error while fetching the requestdata" , error)
+    res.status(500).json({ message: error.message });
+  }
+})
 // Get received collaboration requests
 router.get('/received', auth, async (req, res) => {
   try {
@@ -63,28 +79,28 @@ if(!collaborations){
   }
 });
 
-// // Get sent collaboration requests
-// router.get('/sent', auth, async (req, res) => {
-//   try {
-//     const collaborations = await Collaboration.find({ sender: req.user._id })
-//       .populate('receiver', 'name profileImage')
-//       .sort({ createdAt: -1 });
+// Get sent collaboration requests
+router.get('/sent', auth, async (req, res) => {
+  try {
+    const collaborations = await Collaboration.find({ sender: req.user._id })
+      .populate('receiver', 'name profileImage')
+      .sort({ createdAt: -1 });
 
-//     // Transform user._id to user.id for consistency
-//     const transformedCollaborations = collaborations.map(collaboration => {
-//       const collaborationObj = collaboration.toObject();
-//       if (collaborationObj.receiver) {
-//         collaborationObj.receiver.id = collaborationObj.receiver._id;
-//         delete collaborationObj.receiver._id;
-//       }
-//       return collaborationObj;
-//     });
+    // Transform user._id to user.id for consistency
+    const transformedCollaborations = collaborations.map(collaboration => {
+      const collaborationObj = collaboration.toObject();
+      if (collaborationObj.receiver) {
+        collaborationObj.receiver.id = collaborationObj.receiver._id;
+        delete collaborationObj.receiver._id;
+      }
+      return collaborationObj;
+    });
 
-//     res.json(transformedCollaborations);
-//   } catch (error) {
-//     res.status(400).json({ message: error.message });
-//   }
-// });
+    res.json(transformedCollaborations);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
 
 // Update collaboration request status
 router.patch('/:id', auth, async (req, res) => {
@@ -114,36 +130,36 @@ router.patch('/:id', auth, async (req, res) => {
 });
 
 // Get single collaboration request
-router.get('/:id', auth, async (req, res) => {
-  try {
-    const collaboration = await Collaboration.findById(req.params.id)
-      .populate('sender', 'name profileImage bio skills socialLinks')
-      .populate('receiver', 'name profileImage bio skills socialLinks');
+// router.get('/:id', auth, async (req, res) => {
+//   try {
+//     const collaboration = await Collaboration.findById(req.params.id)
+//       .populate('sender', 'name profileImage bio skills socialLinks')
+//       .populate('receiver', 'name profileImage bio skills socialLinks');
 
-    if (!collaboration) {
-      return res.status(404).json({ message: 'Collaboration request not found' });
-    }
+//     if (!collaboration) {
+//       return res.status(404).json({ message: 'Collaboration request not found' });
+//     }
 
-    if (collaboration.sender._id.toString() !== req.user._id.toString() &&
-        collaboration.receiver._id.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
+//     if (collaboration.sender._id.toString() !== req.user._id.toString() &&
+//         collaboration.receiver._id.toString() !== req.user._id.toString()) {
+//       return res.status(403).json({ message: 'Access denied' });
+//     }
 
-    // Transform user._id to user.id for consistency
-    const collaborationObj = collaboration.toObject();
-    if (collaborationObj.sender) {
-      collaborationObj.sender.id = collaborationObj.sender._id;
-      delete collaborationObj.sender._id;
-    }
-    if (collaborationObj.receiver) {
-      collaborationObj.receiver.id = collaborationObj.receiver._id;
-      delete collaborationObj.receiver._id;
-    }
+//     // Transform user._id to user.id for consistency
+//     const collaborationObj = collaboration.toObject();
+//     if (collaborationObj.sender) {
+//       collaborationObj.sender.id = collaborationObj.sender._id;
+//       delete collaborationObj.sender._id;
+//     }
+//     if (collaborationObj.receiver) {
+//       collaborationObj.receiver.id = collaborationObj.receiver._id;
+//       delete collaborationObj.receiver._id;
+//     }
 
-    res.json(collaborationObj);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+//     res.json(collaborationObj);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// });
 
 module.exports = router; 

@@ -30,6 +30,9 @@ const Profile = () => {
   const [skillInput, setSkillInput] = useState('');
   const [portfolioCount, setPortfolioCount] = useState(0);
   const [totalLikes, setTotalLikes] = useState(0);
+  const [sendingRequest, setSendingRequest] = useState(false);
+  const [collaborationStatus, setCollaborationStatus] = useState(null);
+  const [checkingCollaboration, setCheckingCollaboration] = useState(false);
 
   // Helpers to manage skills
   const addSkill = () => {
@@ -41,6 +44,9 @@ const Profile = () => {
   };
   const removeSkill = (idx) => setskills(prev => prev.filter((_, i) => i !== idx));
   // const removeskill = (skill) => setskills(prev => prev.filter(s => s !== skill));
+
+  // Define isOwnProfile early so it can be used in useEffects
+  const isOwnProfile = currentUser?.id === user?.id;
 
   useEffect(() => {
     const userId = id || currentUser?.id;
@@ -115,6 +121,13 @@ const Profile = () => {
     fetchTotalLikes();
   }, [user, currentUser]);
 
+  // Check collaboration status when viewing other users' profiles
+  useEffect(() => {
+    if (user && currentUser && !isOwnProfile) {
+      checkCollaborationStatus();
+    }
+  }, [user, currentUser, isOwnProfile]);
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -122,6 +135,60 @@ const Profile = () => {
       navigate('/');
     } catch (err) {
       toast.error('Failed to logout');
+    }
+  };
+
+  const handleSendCollaborationRequest = async () => {
+    try {
+      setSendingRequest(true);
+      await axios.post('/collaboration', {
+        receiver: user.id  // Send the profile owner's ID as receiver
+      });
+      toast.success('Collaboration request sent successfully!');
+      // After sending, check the collaboration status again
+      checkCollaborationStatus();
+    } catch (error) {
+      console.error('Error sending collaboration request:', error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Failed to send collaboration request');
+      }
+    } finally {
+      setSendingRequest(false);
+    }
+  };
+
+  const checkCollaborationStatus = async () => {
+    if (!user || !currentUser || isOwnProfile) return;
+    
+    try {
+      setCheckingCollaboration(true);
+      // Check if current user has sent a request to this profile owner
+      const sentResponse = await axios.get('/collaboration/sent');
+      const sentRequest = sentResponse.data.find(collab => collab.receiver.id === user.id);
+      
+      if (sentRequest) {
+        setCollaborationStatus(sentRequest.status);
+        return;
+      }
+      
+      // Check if profile owner has sent a request to current user
+      const receivedResponse = await axios.get('/collaboration/received');
+      const receivedRequest = receivedResponse.data.find(collab => collab.sender.id === user.id);
+      
+      if (receivedRequest) {
+        setCollaborationStatus(receivedRequest.status);
+        return;
+      }
+      
+      // No collaboration found
+      setCollaborationStatus(null);
+    } catch (error) {
+      console.error('Error checking collaboration status:', error);
+      setCollaborationStatus(null);
+    } finally {
+      setCheckingCollaboration(false);
     }
   };
 
@@ -217,8 +284,6 @@ const Profile = () => {
     return <div className="flex justify-center items-center h-screen">User not found</div>;
   }
 
-  const isOwnProfile = currentUser?.id === user.id;
-  
   // Handle socialLinks whether it's an array or object
   const socialLinksObj = Array.isArray(user.socialLinks) && user.socialLinks.length > 0 
     ? user.socialLinks[0] 
@@ -260,6 +325,48 @@ const Profile = () => {
               >
                 Logout
               </button>
+            </div>
+          )}
+          
+          {!isOwnProfile && (
+            <div className="flex space-x-2">
+              {checkingCollaboration ? (
+                <button 
+                  disabled
+                  className="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
+                >
+                  Checking...
+                </button>
+              ) : collaborationStatus === 'pending' ? (
+                <button 
+                  disabled
+                  className="bg-yellow-500 text-white px-4 py-2 rounded cursor-not-allowed"
+                >
+                  Request Pending
+                </button>
+              ) : collaborationStatus === 'accepted' ? (
+                <button 
+                  disabled
+                  className="bg-blue-500 text-white px-4 py-2 rounded cursor-not-allowed"
+                >
+                  Connected
+                </button>
+              ) : collaborationStatus === 'rejected' ? (
+                <button 
+                  disabled
+                  className="bg-red-500 text-white px-4 py-2 rounded cursor-not-allowed"
+                >
+                  Request Rejected
+                </button>
+              ) : (
+                <button
+                  onClick={handleSendCollaborationRequest}
+                  disabled={sendingRequest}
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {sendingRequest ? 'Sending...' : 'Connect'}
+                </button>
+              )}
             </div>
           )}
         </div>
