@@ -43,6 +43,12 @@ function Navbar() {
                     Dashboard
                   </Link>
                   <Link
+                    to="/liked-portfolios"
+                    className="border-transparent text-gray-200 hover:border-white/30 hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus:text-blue-300 active:scale-95"
+                  >
+                    Liked
+                  </Link>
+                  <Link
                     to={`/profile/${user.id}`}
                     className="border-transparent text-gray-200 hover:border-white/30 hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus:text-blue-300 active:scale-95"
                   >

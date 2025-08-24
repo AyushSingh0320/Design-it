@@ -137,6 +137,82 @@ router.get("/totallikes", auth , async (req , res) => {
   }
 })
 
+// Get all liked portfolio by a paticular user 
+
+router.get("/alllikedportfolio" , auth , async (req , res) => {
+  try {
+    const likedportfolio = await User.aggregate([
+      {
+        $match : {
+          _id : new mongoose.Types.ObjectId(req.user._id)
+        }
+      },
+      {
+        $lookup : {
+          from : "likes",
+          localField : "_id",
+          foreignField : "Likedby",
+          as : "mylikes",
+          pipeline : [
+            {
+              $lookup : {
+                from : "portfolios",
+                localField : "likedPortfolio",
+                foreignField : "_id",
+                as : "likedportfolio",
+                pipeline : [
+                    {
+                     $lookup : {
+                      from : "users",
+                      localField : "user",
+                      foreignField : "_id",
+                      as : "owner",
+                      pipeline : [
+                        {
+                          $project : {
+                            name : 1 , 
+                            profileImage : 1
+                          }
+                        }
+                      ]
+                     }
+                    }  ,
+                      {
+              $addFields : {
+                owner : {
+                  $first : "$owner"
+                }
+              }
+            }
+          ]
+          
+            }
+          },
+          {
+            $addFields : {
+              likedportfolio : {
+                $first : "$likedportfolio"
+              }
+            }
+          },
+          {
+            $project : {
+              likedportfolio : 1
+            }
+          }
+        ]
+      }
+    }
+    ]);
+    console.log(likedportfolio)
+    
+    res.status(200).json(likedportfolio[0].mylikes);
+  } catch (error) {
+    console.error('Error getting liked portfolios:', error);
+    res.status(500).json({ message: error.message });
+  }
+})
+
 // Get user profile
 router.get('/:id', async (req, res) => {
   try {
