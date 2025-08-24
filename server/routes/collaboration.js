@@ -12,19 +12,18 @@ router.post('/', auth, async (req, res) => {
       return res.status(401).json({"message" : "Unauthorized User"});
     }
     
-    const { receiver, portfolioItem } = req.body;
+    const { receiver } = req.body;
     console.log('Request body:', req.body);
     console.log('Sender:', sender);
     console.log('Receiver:', receiver);
-    console.log('Portfolio Item:', portfolioItem);
+  
     
-    if(!receiver || !portfolioItem){
-      return res.status(400).json({"message" : "Receiver and portfolioItem are required"});
+    if(!receiver){
+      return res.status(400).json({"message" : "Receiver is required"});
     }
 
     const collaboration = new Collaboration({
       sender,
-      portfolioItem,
       receiver, 
       status: "pending"
     });
@@ -64,7 +63,7 @@ if(!collaborations){
   }
 });
 
-// Get sent collaboration requests
+// // Get sent collaboration requests
 // router.get('/sent', auth, async (req, res) => {
 //   try {
 //     const collaborations = await Collaboration.find({ sender: req.user._id })
@@ -92,8 +91,10 @@ router.patch('/:id', auth, async (req, res) => {
   try {
     const { status } = req.body;
 
-    const collaboration = await Collaboration.findById(
-       req.params.id);
+    const collaboration = await Collaboration.findOne({
+      _id: req.params.id,
+      receiver: req.user._id
+    });
 
     if (!collaboration) {
       return res.status(404).json({ message: 'Collaboration request not found' });
