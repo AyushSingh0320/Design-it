@@ -6,11 +6,6 @@ const collaborationSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  portfolioItem: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Portfolio',
-    required: true
-  },
   receiver : {
     type : mongoose.Schema.Types.ObjectId,
     ref : 'User',
@@ -26,7 +21,7 @@ const collaborationSchema = new mongoose.Schema({
 });
 
 // Prevent duplicate collaboration requests
-collaborationSchema.index({ sender: 1, portfolioItem: 1 }, { unique: true });
+collaborationSchema.index({ sender: 1, receiver: 1 }, { unique: true });
 
 const Collaboration = mongoose.model('Collaboration', collaborationSchema);
 
