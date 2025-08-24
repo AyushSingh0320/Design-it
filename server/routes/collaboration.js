@@ -92,10 +92,8 @@ router.patch('/:id', auth, async (req, res) => {
   try {
     const { status } = req.body;
 
-    const collaboration = await Collaboration.findOne({
-      _id: req.params.id,
-      receiver: req.user._id
-    });
+    const collaboration = await Collaboration.findById(
+       req.params.id);
 
     if (!collaboration) {
       return res.status(404).json({ message: 'Collaboration request not found' });
