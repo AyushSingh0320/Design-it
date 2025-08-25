@@ -33,8 +33,8 @@ const Network = () => {
       setLoading(true);
       const response = await axios.get('/collaboration/received');
       console.log('Received requests:', response.data);
-     const pending
-
+     const pendingrequest = response.data.filter(request => request.status === "pending") 
+       setRequests(pendingrequest)
     } catch (error) {
       console.error('Error fetching requests:', error);
       toast.error('Failed to fetch collaboration requests');
