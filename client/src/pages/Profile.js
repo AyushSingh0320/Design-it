@@ -167,6 +167,7 @@ const Profile = () => {
       // Check if current user has sent a request to this profile owner
       const sentResponse = await axios.get('/collaboration/sent');
       const sentRequest = sentResponse.data.find(collab => collab.receiver.id === user.id);
+      console.log("sebder response data",sentResponse)
       
       if (sentRequest) {
         setCollaborationStatus(sentRequest.status);

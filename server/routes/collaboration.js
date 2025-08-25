@@ -36,23 +36,30 @@ router.post('/', auth, async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-// GETTING THE REQUEST DATA 
-router.get("/:id" , async  (req,res) => {
+
+// Get sent collaboration requests
+router.get('/sent', auth, async (req, res) => {
   try {
-    const collabid = req.params.id
-    if(!collabid){
-     return res.status(404).json({"message" : "Id not found"})
-    }
-    const requestdata = await Collaboration.findById(collabid)
-    if(!requestdata){
-      return res.status(404).json({"message" : "There is no request with this id"})
-    }
-   return  res.status(200).json(requestdata)
+    const collaborations = await Collaboration.find({ sender: req.user._id })
+      .populate('receiver', 'name profileImage')
+      .sort({ createdAt: -1 });
+
+    // Transform user._id to user.id for consistency
+    const transformedCollaborations = collaborations.map(collaboration => {
+      const collaborationObj = collaboration.toObject();
+      if (collaborationObj.receiver) {
+        collaborationObj.receiver.id = collaborationObj.receiver._id;
+        delete collaborationObj.receiver._id;
+      }
+      return collaborationObj;
+    });
+
+    res.json(transformedCollaborations);
   } catch (error) {
-    console.error("Error while fetching the requestdata" , error)
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
-})
+});
+
 // Get received collaboration requests
 router.get('/received', auth, async (req, res) => {
   try {
@@ -79,28 +86,23 @@ if(!collaborations){
   }
 });
 
-// Get sent collaboration requests
-router.get('/sent', auth, async (req, res) => {
+// GETTING THE REQUEST DATA 
+router.get("/:id" , async  (req,res) => {
   try {
-    const collaborations = await Collaboration.find({ sender: req.user._id })
-      .populate('receiver', 'name profileImage')
-      .sort({ createdAt: -1 });
-
-    // Transform user._id to user.id for consistency
-    const transformedCollaborations = collaborations.map(collaboration => {
-      const collaborationObj = collaboration.toObject();
-      if (collaborationObj.receiver) {
-        collaborationObj.receiver.id = collaborationObj.receiver._id;
-        delete collaborationObj.receiver._id;
-      }
-      return collaborationObj;
-    });
-
-    res.json(transformedCollaborations);
+    const collabid = req.params.id
+    if(!collabid){
+     return res.status(404).json({"message" : "Id not found"})
+    }
+    const requestdata = await Collaboration.findById(collabid)
+    if(!requestdata){
+      return res.status(404).json({"message" : "There is no request with this id"})
+    }
+   return  res.status(200).json(requestdata)
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error while fetching the requestdata" , error)
+    res.status(500).json({ message: error.message });
   }
-});
+})
 
 // Update collaboration request status
 router.patch('/:id', auth, async (req, res) => {
