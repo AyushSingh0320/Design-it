@@ -85,7 +85,7 @@ const Network = () => {
         </div>
 
         {/* Requests List */}
-        <div className="divide-y divide-gray-200">
+        <div >
           {requests.length === 0 ? (
             <div className="p-8 text-center">
               <div className="flex flex-col items-center">

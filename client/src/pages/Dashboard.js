@@ -72,7 +72,7 @@ const Dashboard = () => {
 
       {portfolioItems.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 mb-4">You haven't added any portfolio items yet.</p>
+          <p className="text-rose-100 mb-4">You haven't added any portfolio items yet.</p>
           <Link
             to="/portfolio/new"
             className="text-blue-500 hover:text-blue-600"
