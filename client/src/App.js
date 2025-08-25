@@ -14,6 +14,7 @@ import CreatePortfolioItem from './pages/CreatePortfolioItem';
 import EditPortfolioItem from './pages/EditPortfolioItem';
 import CreateCollaborationRequest from './pages/CreateCollaborationRequest';
 import LikedPortfolios from './pages/LikedPortfolios';
+import Network from './pages/Network';
 import DarkVeil from './Background';
 
 const ErrorBoundary = ({ error }) => (
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
       {
         path: 'liked-portfolios',
         element: <PrivateRoute><LikedPortfolios /></PrivateRoute>
+      },
+      {
+        path: 'network',
+        element: <PrivateRoute><Network /></PrivateRoute>
       },
       {
         path: 'portfolio/create',

@@ -52,6 +52,7 @@ const Gallery = () => {
       const response = await axios.get(`/portfolio?${params.toString()}`);
       setPortfolioItems(response.data);
       
+      
       // Fetch likes data for all portfolio items
       const likesPromises = response.data.map(async (item) => {
         try {
@@ -254,19 +255,21 @@ const Gallery = () => {
                 />
               </div>
               <div className="p-4">
-                <div 
-                  className="cursor-pointer"
-                  onClick={() => navigate(`/portfolio/${portfolioId}`)}
-                >
                   <h2 className="text-xl font-semibold mb-2 text-white">{item.title}</h2>
                   <p className="text-gray-200 mb-4">{item.description}</p>
-                  <div className="flex items-center mb-4">
+                  <div className="flex items-center mb-4 
+                  
+                  ">
                     <img
                       src={getImageUrl(item.user?.profileImage)}
                       alt={item.user?.name}
-                      className="w-8 h-8 rounded-full mr-2 object-cover"
+                      className="w-8 h-8 rounded-full mr-2 object-cover cursor-pointer"
+                      onClick={() => navigate(`/profile/${item.user?._id || item.user?.id}`)}
                     />
-                    <span className="text-gray-200">{item.user?.name}</span>
+                    <span className="text-gray-200 cursor-pointer" 
+                    onClick={() => navigate(`/profile/${item.user?._id || item.user?.id}`)}>
+                    {item.user?.name}
+                      </span>
                   </div>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {item.tags?.map(tag => (
@@ -278,7 +281,7 @@ const Gallery = () => {
                       </span>
                     ))}
                   </div>
-                </div>
+                
                 
                 {/* Like button */}
                 <div className="flex items-center justify-between">
