@@ -99,10 +99,6 @@ const LikedPortfolios = () => {
                 />
               </div>
               <div className="p-4">
-                <div 
-                  className="cursor-pointer"
-                  onClick={() => navigate(`/portfolio/${portfolioId}`)}
-                >
                   <h2 className="text-xl font-semibold mb-2 text-white">{item.title}</h2>
                   <p className="text-gray-200 mb-4">{item.description}</p>
                   
@@ -112,9 +108,13 @@ const LikedPortfolios = () => {
                       <img 
                         src={getImageUrl(item.owner.profileImage)} 
                         alt={item.owner.name}
-                        className="w-8 h-8 rounded-full mr-2 object-cover"
+                         onClick={() => navigate(`/profile/${item.owner?._id || item.owner?.id}`)} 
+                        className="w-8 h-8 rounded-full mr-2 object-cover cursor-pointer"
                       />
-                      <span className="text-gray-300 text-sm">by {item.owner.name}</span>
+                      <span className="text-gray-300 text-sm cursor-pointer" 
+                       onClick={() => navigate(`/profile/${item.owner?._id || item.owner?.id}`)}
+                      >by {item.owner.name}
+                      </span>
                     </div>
                   )}
                   
@@ -131,7 +131,6 @@ const LikedPortfolios = () => {
                       ))}
                     </div>
                   )}
-                </div>
               </div>
             </div>
           );
