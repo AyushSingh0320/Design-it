@@ -125,15 +125,15 @@ const Network = () => {
                     
                     <div className="flex-1">
                       <h3 
-                        className="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer transition-colors duration-200"
+                        className="text-lg font-semibold text-rose-100  hover:text-blue-600 cursor-pointer transition-colors duration-200"
                         onClick={() => navigate(`/profile/${request.sender.id}`)}
                       >
                         {request.sender.name}
                       </h3>
-                      <p className="text-gray-600 text-sm">
+                      <p className=" text-sm text-rose-100 ">
                         Wants to collaborate with you
                       </p>
-                      <p className="text-gray-400 text-xs mt-1">
+                      <p className="text-gray-200 text-xs mt-1">
                         {new Date(request.createdAt).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
