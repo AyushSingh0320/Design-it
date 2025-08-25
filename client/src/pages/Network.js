@@ -108,7 +108,7 @@ const Network = () => {
             </div>
           ) : (
             requests.map((request) => (
-              <div key={request._id} className="p-6 hover:bg-gray-50 transition-colors duration-200">
+              <div key={request._id} className="p-6">
                 <div className="flex items-center justify-between">
                   {/* Sender Info */}
                   <div className="flex items-center space-x-4">
