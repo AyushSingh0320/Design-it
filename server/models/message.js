@@ -33,6 +33,9 @@ const messageschema = new mongoose.Schema(
 },
 {timestamps : true})
 
+// Index for efficient queries
+messageSchema.index({ sender: 1, receiver: 1, createdAt: -1 });
+messageSchema.index({ receiver: 1, isRead: 1 });
 
 const Message = mongoose.model('Message', messageschema);
 module.exports = Message;
