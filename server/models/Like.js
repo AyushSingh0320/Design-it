@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const likeSchema = new mongoose.Schema({
           likedPortfolio : {
-            type : mongoose.Types.ObjectId,
+            type : mongoose.Schema.Types.ObjectId,
             ref : "Portfolio"
           },
           Likedby : {
