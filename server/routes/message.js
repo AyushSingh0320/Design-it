@@ -11,8 +11,8 @@ router.post('/sent' , auth , async (req , res) => {
        if(!sender){
         return res.status(404).json({message : "User not found"})
        }
-       const {receiver , content , messageType = 'text' } = req.body
-       if(!receiver ){
+       const {receiver , content , messageType = 'text' , isRead = false } = req.body
+       if(!receiver){
        return  res.status(404).json({message : "receiver is missing"})
        }
        if(!content){
@@ -34,7 +34,8 @@ router.post('/sent' , auth , async (req , res) => {
         sender,
         receiver,
         content,
-        messageType
+        messageType,
+        isRead
     })
    await message.save();
  res.status(201).json(message);
@@ -44,5 +45,44 @@ router.post('/sent' , auth , async (req , res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+// Gettig all the message between two users 
+
+router.get('/connect/:id' , auth , async (req , res) => {
+    try {
+        const sender = req.user._id
+        if(!sender){
+            return res.status(404).json({message : "User not found"})
+        }
+        const receiver = req.params.id
+         if(!receiver){
+           return res.status(404).json({message : "receiver not found"})
+        }
+         const connection = await Collaboration.findOne({
+        $or : [
+            {sender: sender , receiver: receiver , status: 'accepted'},
+            {  sender: receiver, receiver: sender, status: 'accepted' }
+        ]
+       });
+           if(!connection){
+      return res.status(400).json({message : "you can only message to your connection"})
+    }
+        const messageData = await Message.find({
+            $or: [
+                {sender: sender , receiver: receiver},
+                {sender: receiver , receiver: sender}
+            ]
+        })
+        .populate('sender', 'name profileImage')
+        .populate('receiver', 'name profileImage')
+        .sort({ createdAt: 1 });
+        if(!messageData){
+            res.status(404).json({message : "No message found"})
+        }
+
+    } catch (error) {
+        
+    }
+})
 
 module.exports = router;
