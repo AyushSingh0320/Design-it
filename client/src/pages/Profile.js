@@ -346,12 +346,20 @@ const Profile = () => {
                   Request Pending
                 </button>
               ) : collaborationStatus === 'accepted' ? (
-                <button 
-                  disabled
-                  className="bg-blue-500 text-white px-4 py-2 rounded cursor-not-allowed"
-                >
-                  Connected
-                </button>
+                <div className="flex space-x-2">
+                  <button 
+                    disabled
+                    className="bg-blue-500 text-white px-4 py-2 rounded cursor-not-allowed"
+                  >
+                    Connected
+                  </button>
+                  <button
+                    onClick={() => navigate(`/chat/${user.id}`)}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded transition-colors"
+                  >
+                    💬 Chat
+                  </button>
+                </div>
               ) : collaborationStatus === 'rejected' ? (
                 <button 
                   disabled

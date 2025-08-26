@@ -16,6 +16,8 @@ import EditPortfolioItem from './pages/EditPortfolioItem';
 import CreateCollaborationRequest from './pages/CreateCollaborationRequest';
 import LikedPortfolios from './pages/LikedPortfolios';
 import Network from './pages/Network';
+import Messages from './pages/Messages';
+import Chat from './pages/Chat';
 import DarkVeil from './Background';
 
 const ErrorBoundary = ({ error }) => (
@@ -76,6 +78,14 @@ const router = createBrowserRouter([
       {
         path: 'network',
         element: <PrivateRoute><Network /></PrivateRoute>
+      },
+      {
+        path: 'messages',
+        element: <PrivateRoute><Messages /></PrivateRoute>
+      },
+      {
+        path: 'chat/:id',
+        element: <PrivateRoute><Chat /></PrivateRoute>
       },
       {
         path: 'portfolio/create',

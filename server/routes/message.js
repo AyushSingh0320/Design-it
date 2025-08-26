@@ -67,6 +67,11 @@ router.get('/connect/:id' , auth , async (req , res) => {
            if(!connection){
       return res.status(400).json({message : "you can only message to your connection"})
     }
+// update isRead 
+     await Message.updateMany(
+        {sender: receiver , receiver: sender , isRead: false},
+        {isRead: true , readAt: new Date()}
+    );
         const messageData = await Message.find({
             $or: [
                 {sender: sender , receiver: receiver},
@@ -79,15 +84,88 @@ router.get('/connect/:id' , auth , async (req , res) => {
         if(!messageData){
             res.status(404).json({message : "No message found"})
         }
-    // update the message as read 
-    await Message.updateMany(
-        {sender: receiver , receiver: sender , isRead: false},
-        {isRead: true , raedAt: new Date()}
-    );
+   
+   
     return res.status(200).json(messageData)
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 })
+
+// getting all the message of a patucular user 
+
+router.get('/conversations', auth, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    const conversations = await Message.aggregate([
+      {
+        $match: {
+          $or: [
+            { sender: userId },
+            { receiver: userId }
+          ]
+        }
+      },
+      {
+        $sort: { createdAt: -1 }
+      },
+      {
+        $group: {
+          _id: {
+            $cond: [
+              { $eq: ['$sender', userId] },
+              '$receiver',
+              '$sender'
+            ]
+          },
+          lastMessage: { $first: '$$ROOT' },
+          unreadCount: {
+            $sum: {
+              $cond: [
+                { 
+                  $and: [
+                    { $eq: ['$receiver', userId] },
+                    { $eq: ['$isRead', false] }
+                  ]
+                },
+                1,
+                0
+              ]
+            }
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'user',
+          pipeline: [
+            {
+              $project: {
+                name: 1,
+                profileImage: 1
+              }
+            }
+          ]
+        }
+      },
+      {
+        $addFields: {
+          user: { $first: '$user' }
+        }
+      },
+      {
+        $sort: { 'lastMessage.createdAt': -1 }
+      }
+    ]);
+
+    res.json(conversations);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;
