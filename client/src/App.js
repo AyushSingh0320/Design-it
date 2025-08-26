@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer.js'
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -40,6 +41,7 @@ const AppLayout = () => (
         <main className="container mx-auto px-4 py-8">
           <Outlet />
         </main>
+        <Footer />
       </div>
     </div>
   </AuthProvider>
