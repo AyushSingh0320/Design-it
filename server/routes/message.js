@@ -79,9 +79,14 @@ router.get('/connect/:id' , auth , async (req , res) => {
         if(!messageData){
             res.status(404).json({message : "No message found"})
         }
-
+    // update the message as read 
+    await Message.updateMany(
+        {sender: receiver , receiver: sender , isRead: false},
+        {isRead: true , raedAt: new Date()}
+    );
+    return res.status(200).json(messageData)
     } catch (error) {
-        
+        return res.status(500).json({ message: error.message });
     }
 })
 
