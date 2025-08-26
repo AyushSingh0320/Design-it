@@ -35,10 +35,10 @@ const AppLayout = () => (
         <DarkVeil />
       </div>
       
-      {/* Content positioned relative to appear above background */}
-      <div className="relative z-10">
+      {/* Content positioned relative to appear above background with flex layout */}
+      <div className="relative z-10 min-h-screen flex flex-col">
         <Navbar />
-        <main className="container mx-auto px-4 py-8">
+        <main className="  flex-1 bg-transparent">
           <Outlet />
         </main>
         <Footer />
