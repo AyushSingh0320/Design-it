@@ -188,6 +188,7 @@ const Gallery = () => {
               </svg>
             </div>
             <input
+            key="search-input"
               type="text"
               placeholder="Search designs..."
               value={searchQuery}
