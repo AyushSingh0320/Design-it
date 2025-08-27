@@ -15,6 +15,15 @@ const Chat = () => {
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
 
+// Helper function to get full image URL
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return '/icon.png';
+  if (imagePath.startsWith('http')) return imagePath;
+  // Normalize backslashes and ensure leading slash
+  const normalized = `/${imagePath}`.replace(/\\\\/g, '/').replace(/\/+/, '/');
+  return `http://localhost:5000${normalized}`;
+};
+
   // Scroll to bottom of messages
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -91,11 +100,6 @@ console.log("new message" , newmessagewithsender)
     }
   };
 
-  useEffect(() => {
-  console.log("Messages state updated:", messages.length, "total messages");
-  console.log("Latest message:", messages[messages.length - 1]);
-}, [messages]);
-
   // Format timestamp
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -133,7 +137,7 @@ console.log("chat patner" , chatPartner)
           {chatPartner && (
             <>
               <img
-                src={chatPartner.profileImage ? `/uploads/${chatPartner.profileImage}` : '/icon.png'}
+                src={chatPartner?.profileImage ? getImageUrl(chatPartner?.profileImage) : '/icon.png'}
                 alt={chatPartner.name}
                 className="w-10 h-10 rounded-full object-cover"
               />
