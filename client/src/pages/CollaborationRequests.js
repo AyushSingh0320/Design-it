@@ -80,7 +80,7 @@ const CollaborationRequests = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <img
-                        src={request.from.profileImage || 'https://via.placeholder.com/40'}
+                        src={request.from.profileImage || '/icon.png'}
                         alt={request.from.name}
                         className="h-10 w-10 rounded-full"
                       />

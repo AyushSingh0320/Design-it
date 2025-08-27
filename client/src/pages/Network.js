@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 // Helper function to get full image URL
 const getImageUrl = (imagePath) => {
-  if (!imagePath) return 'https://via.placeholder.com/80';
+  if (!imagePath) return '/icon.png';
   if (imagePath.startsWith('http')) return imagePath;
   // Normalize backslashes and ensure leading slash
   const normalized = `/${imagePath}`.replace(/\\\\/g, '/').replace(/\/+/, '/');

@@ -92,7 +92,7 @@ const Messages = () => {
                 <div className="relative">
                     {/* image is not coming */}
                   <img
-                    src={conversation.user?.profileImage ? `/uploads/${conversation.user.profileImage}` : '/default-avatar.png'}
+                    src={conversation.user?.profileImage ? `/uploads/${conversation.user.profileImage}` : '/icon.png'}
                     alt={conversation.user?.name || 'User'}
                     className="w-12 h-12 rounded-full object-cover"
                   />

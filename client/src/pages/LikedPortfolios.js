@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 // Helper function to get full image URL
 const getImageUrl = (imagePath) => {
-  if (!imagePath) return 'https://via.placeholder.com/40';
+  if (!imagePath) return '/icon.png';
   
   // Handle if imagePath is an object with url property
   if (typeof imagePath === 'object' && imagePath.url) {
@@ -16,7 +16,7 @@ const getImageUrl = (imagePath) => {
   // Ensure imagePath is a string
   if (typeof imagePath !== 'string') {
     console.log('Invalid image path type:', typeof imagePath, imagePath);
-    return 'https://via.placeholder.com/40';
+    return '/icon.png';
   }
   
   if (imagePath.startsWith('http')) return imagePath;
@@ -93,7 +93,7 @@ const LikedPortfolios = () => {
                 <img
                   src={item.images && item.images.length > 0 
                     ? getImageUrl(item.images[0])
-                    : 'https://via.placeholder.com/400x300?text=No+Image'}
+                    : '/icon.png'}
                   alt={item.title}
                   className="w-full h-48 object-cover"
                 />

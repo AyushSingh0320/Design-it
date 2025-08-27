@@ -117,7 +117,7 @@ console.log("chat patner" , chatPartner)
           {chatPartner && (
             <>
               <img
-                src={chatPartner.profileImage ? `/uploads/${chatPartner.profileImage}` : '/default-avatar.png'}
+                src={chatPartner.profileImage ? `/uploads/${chatPartner.profileImage}` : '/icon.png'}
                 alt={chatPartner.name}
                 className="w-10 h-10 rounded-full object-cover"
               />

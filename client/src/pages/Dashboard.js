@@ -91,7 +91,7 @@ const Dashboard = () => {
               <img
                 src={item.images && item.images.length > 0 
                   ? `http://localhost:5000${item.images[0].url}` 
-                  : 'https://via.placeholder.com/400x300?text=No+Image'}
+                  : '/icon.png'}
                 alt={item.title}
                 className="w-full h-48 object-cover"
               />

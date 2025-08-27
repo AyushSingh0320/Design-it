@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast';
 
 // Helper function to get full image URL
 const getImageUrl = (imagePath) => {
-  if (!imagePath) return 'https://via.placeholder.com/150';
+  if (!imagePath) return '/icon.png';
   if (imagePath.startsWith('http')) return imagePath;
   // Normalize backslashes and ensure leading slash
   const normalized = `/${imagePath}`.replace(/\\\\/g, '/').replace(/\/+/, '/');
@@ -197,7 +197,7 @@ const Profile = () => {
     setEditMode(true);
     setBio(user.bio || '');
     setProfileImage(null);
-    setProfileImagePreview(getImageUrl(user.profileImage) || 'https://via.placeholder.com/150');
+    setProfileImagePreview(getImageUrl(user.profileImage) || '/icon.png');
     setRemovingImage(false);
     setskills(user.skills || []);
     
@@ -212,7 +212,7 @@ const Profile = () => {
     setEditMode(false);
     setBio(user.bio || '');
     setProfileImage(null);
-    setProfileImagePreview(getImageUrl(user.profileImage) || 'https://via.placeholder.com/150');
+    setProfileImagePreview(getImageUrl(user.profileImage) || '/icon.png');
     setRemovingImage(false);
     setskills(user.skills || []);
     
@@ -222,6 +222,21 @@ const Profile = () => {
       : user.socialLinks || {};
     setsociallinks(socialLinksObj);
   };
+
+  // const handleCancelEdit = () => {
+  //   setEditMode(false);
+  //   setBio(user.bio || '');
+  //   setProfileImage(null);
+  //   setProfileImagePreview(getImageUrl(user.profileImage) || '/icon.png');
+  //   setRemovingImage(false);
+  //   setskills(user.skills || []);
+  //   
+  //   // Handle socialLinks properly whether it's array or object
+  //   const socialLinksObj = Array.isArray(user.socialLinks) && user.socialLinks.length > 0 
+  //     ? user.socialLinks[0] 
+  //     : user.socialLinks || {};
+  //   setsociallinks(socialLinksObj);
+  // };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -234,7 +249,7 @@ const Profile = () => {
 
   const handleRemoveImage = () => {
     setProfileImage(null);
-    setProfileImagePreview('https://via.placeholder.com/150');
+    setProfileImagePreview('/icon.png');
     setRemovingImage(true);
   };
 
