@@ -43,9 +43,9 @@ const Gallery = () => {
       if (selectedCategory && selectedCategory !== 'all') {
         params.append('category', selectedCategory);
       }
-      if (activeSearchQuery) {
-        params.append('search', activeSearchQuery);
-      }
+      // if (activeSearchQuery) {
+      //   params.append('search', activeSearchQuery);
+      // }
       if (selectedTags.length > 0) {
         params.append('tags', selectedTags.join(','));
       }
@@ -105,19 +105,19 @@ const Gallery = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, activeSearchQuery, selectedTags, user]);
+  }, [selectedCategory, selectedTags, user]);
 
   // Handle search form submission
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    setActiveSearchQuery(searchQuery); // Update the active search query
-  };
+  // const handleSearchSubmit = (e) => {
+  //   e.preventDefault();
+  //   setActiveSearchQuery(searchQuery); // Update the active search query
+  // };
 
-  // Clear search function
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    setActiveSearchQuery('');
-  };
+  // // Clear search function
+  // const handleClearSearch = () => {
+  //   setSearchQuery('');
+  //   setActiveSearchQuery('');
+  // };
 
   // Handle like/unlike action
   const handleLikeToggle = async (portfolioId, e) => {
@@ -195,7 +195,7 @@ const Gallery = () => {
       <div className="mb-8">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           {/* Search Form */}
-          <form onSubmit={handleSearchSubmit} className="relative flex-1 flex">
+          {/* <form onSubmit={handleSearchSubmit} className="relative flex-1 flex">
             <div className="relative flex-1">
               <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
                 <svg className="h-5 w-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -219,7 +219,7 @@ const Gallery = () => {
               </svg>
             </button>
             {/* Clear Search Button */}
-            {(searchQuery || activeSearchQuery) && (
+            {/* {(searchQuery || activeSearchQuery) && (
               <button
                 type="button"
                 onClick={handleClearSearch}
@@ -228,7 +228,7 @@ const Gallery = () => {
                 ✕
               </button>
             )}
-          </form>
+          </form> */}  */
 
           {/* Category Filters */}
           <div className="flex flex-wrap gap-2">
@@ -249,7 +249,7 @@ const Gallery = () => {
         </div>
 
         {/* Active Search Query Display */}
-        {activeSearchQuery && (
+        {/* {activeSearchQuery && (
           <div className="mb-4 text-gray-300">
             <span>Searching for: "</span>
             <span className="text-blue-400 font-medium">{activeSearchQuery}</span>
@@ -261,7 +261,7 @@ const Gallery = () => {
               (clear)
             </button>
           </div>
-        )}
+        )} */}
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
