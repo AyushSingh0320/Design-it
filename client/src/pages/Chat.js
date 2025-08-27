@@ -68,9 +68,20 @@ console.log("current user" , currentUser)
         content: newMessage.trim(),
         messageType: 'text'
       });
+console.log("response" , response)
+
+const newmessagewithsender = {
+  ...response.data,
+  sender : {
+    _id : currentUser.id,
+
+  }
+}
+console.log("new message" , newmessagewithsender)
 
       // Add new message to messages array
-      setMessages(prev => [...prev, response.data]);
+      setMessages(prev => [...prev, newmessagewithsender]);
+      
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -79,6 +90,11 @@ console.log("current user" , currentUser)
       setSending(false);
     }
   };
+
+  useEffect(() => {
+  console.log("Messages state updated:", messages.length, "total messages");
+  console.log("Latest message:", messages[messages.length - 1]);
+}, [messages]);
 
   // Format timestamp
   const formatTime = (timestamp) => {

@@ -9,6 +9,17 @@ const Messages = () => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
 
+// Helper function to get full image URL
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return '/icon.png';
+  if (imagePath.startsWith('http')) return imagePath;
+  // Normalize backslashes and ensure leading slash
+  const normalized = `/${imagePath}`.replace(/\\\\/g, '/').replace(/\/+/, '/');
+  return `http://localhost:5000${normalized}`;
+};
+
+
+
   useEffect(() => {
     const fetchConversations = async () => {
       try {
@@ -92,7 +103,7 @@ const Messages = () => {
                 <div className="relative">
                     {/* image is not coming */}
                   <img
-                    src={conversation.user?.profileImage ? `/uploads/${conversation.user.profileImage}` : '/icon.png'}
+                    src={conversation.user?.profileImage ? getImageUrl(conversation.user?.profileImage) : '/icon.png'}
                     alt={conversation.user?.name || 'User'}
                     className="w-12 h-12 rounded-full object-cover"
                   />
