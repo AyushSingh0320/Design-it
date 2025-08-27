@@ -29,7 +29,8 @@ const Gallery = () => {
   const [portfolioItems, setPortfolioItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(''); // For input display
+  const [activeSearchQuery, setActiveSearchQuery] = useState(''); // For API calls
   const [selectedTags, setSelectedTags] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [likesData, setLikesData] = useState({});
@@ -42,8 +43,8 @@ const Gallery = () => {
       if (selectedCategory && selectedCategory !== 'all') {
         params.append('category', selectedCategory);
       }
-      if (searchQuery) {
-        params.append('search', searchQuery);
+      if (activeSearchQuery) {
+        params.append('search', activeSearchQuery);
       }
       if (selectedTags.length > 0) {
         params.append('tags', selectedTags.join(','));
@@ -104,7 +105,19 @@ const Gallery = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, searchQuery, selectedTags, user]);
+  }, [selectedCategory, activeSearchQuery, selectedTags, user]);
+
+  // Handle search form submission
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setActiveSearchQuery(searchQuery); // Update the active search query
+  };
+
+  // Clear search function
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setActiveSearchQuery('');
+  };
 
   // Handle like/unlike action
   const handleLikeToggle = async (portfolioId, e) => {
@@ -181,21 +194,43 @@ const Gallery = () => {
       {/* Search and Filter Section */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
-          <div className="relative flex-1">
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-              <svg className="h-5 w-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          {/* Search Form */}
+          <form onSubmit={handleSearchSubmit} className="relative flex-1 flex">
+            <div className="relative flex-1">
+              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                <svg className="h-5 w-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder="Search designs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-black/30 backdrop-blur-sm border border-white/20 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white placeholder-gray-300"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500/80 hover:bg-blue-600/80 text-white rounded-r-lg border border-blue-400 transition-colors duration-200 flex items-center"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-            </div>
-            <input
-            key="search-input"
-              type="text"
-              placeholder="Search designs..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-black/30 backdrop-blur-sm border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white placeholder-gray-300"
-            />
-          </div>
+            </button>
+            {/* Clear Search Button */}
+            {(searchQuery || activeSearchQuery) && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="ml-2 px-3 py-2 bg-gray-500/80 hover:bg-gray-600/80 text-white rounded-lg border border-gray-400 transition-colors duration-200"
+              >
+                ✕
+              </button>
+            )}
+          </form>
+
+          {/* Category Filters */}
           <div className="flex flex-wrap gap-2">
             {categories.map(category => (
               <button
@@ -212,6 +247,21 @@ const Gallery = () => {
             ))}
           </div>
         </div>
+
+        {/* Active Search Query Display */}
+        {activeSearchQuery && (
+          <div className="mb-4 text-gray-300">
+            <span>Searching for: "</span>
+            <span className="text-blue-400 font-medium">{activeSearchQuery}</span>
+            <span>"</span>
+            <button
+              onClick={handleClearSearch}
+              className="ml-2 text-gray-400 hover:text-white transition-colors"
+            >
+              (clear)
+            </button>
+          </div>
+        )}
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
