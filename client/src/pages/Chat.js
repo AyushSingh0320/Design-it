@@ -19,7 +19,7 @@ const Chat = () => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
+console.log("current user" , currentUser)
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -35,7 +35,7 @@ const Chat = () => {
         // Set chat partner info from first message
         if (response.data.length > 0) {
           const firstMessage = response.data[0];
-          const partner = firstMessage.sender._id === currentUser._id 
+           const partner = firstMessage.sender?._id === currentUser?.id 
             ? firstMessage.receiver 
             : firstMessage.sender;
           setChatPartner(partner);
@@ -92,8 +92,8 @@ const Chat = () => {
       return date.toLocaleDateString();
     }
   };
-
-  if (loading) {
+console.log("chat patner" , chatPartner)
+  if (loading || !currentUser) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-center items-center h-64">
@@ -123,7 +123,7 @@ const Chat = () => {
               />
               <div>
                 <h2 className="text-white font-semibold">{chatPartner.name}</h2>
-                <p className="text-gray-300 text-sm">Online</p>
+                {/* <p className="text-gray-300 text-sm">Online</p> */}
               </div>
             </>
           )}
@@ -139,7 +139,7 @@ const Chat = () => {
         ) : (
           <div className="space-y-4">
             {messages.map((message) => {
-              const isCurrentUser = message.sender._id === currentUser._id;
+              const isCurrentUser = message.sender._id === currentUser.id;
               return (
                 <div
                   key={message._id}
