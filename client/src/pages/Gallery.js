@@ -45,7 +45,7 @@ const Gallery = () => {
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         window.history.pushState({}, "", newUrl);
 
-        
+
       const response = await axios.get(`/portfolio?${params.toString()}`);
       setPortfolioItems(response.data);
       
@@ -72,7 +72,7 @@ const Gallery = () => {
           };
         }
       });
-    // console.log(likesPromises)
+     console.log("promis" , likesPromises)
 
       const likesResults = await Promise.all(likesPromises);
       const likesDataMap = {};
