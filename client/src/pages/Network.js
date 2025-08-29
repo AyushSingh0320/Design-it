@@ -3,15 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axios';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
+import getImageUrl from '../utils/Imagepath';
 
-// Helper function to get full image URL
-const getImageUrl = (imagePath) => {
-  if (!imagePath) return '/icon.png';
-  if (imagePath.startsWith('http')) return imagePath;
-  // Normalize backslashes and ensure leading slash
-  const normalized = `/${imagePath}`.replace(/\\\\/g, '/').replace(/\/+/, '/');
-  return `http://localhost:5000${normalized}`;
-};
+
+
 
 const Network = () => {
   const navigate = useNavigate();
