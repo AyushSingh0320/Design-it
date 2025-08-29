@@ -5,14 +5,6 @@ import { toast } from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import getImageUrl from '../utils/Imagepath.js';
 
-// Helper function to get full image URL
-// const getImageUrl = (imagePath) => {
-//   if (!imagePath) return '/icon.png';
-//   if (imagePath.startsWith('http')) return imagePath;
-//   // Normalize backslashes and ensure leading slash
-//   const normalized = `/${imagePath}`.replace(/\\\\/g, '/').replace(/\/+/, '/');
-//   return `http://localhost:5000${normalized}`;
-// };
 
 const categories = [
   { id: 'all', name: 'All' },
