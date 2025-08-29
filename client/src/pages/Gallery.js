@@ -42,7 +42,10 @@ const Gallery = () => {
       if (selectedTags.length > 0) {
         params.append('tags', selectedTags.join(','));
       }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
 
+        
       const response = await axios.get(`/portfolio?${params.toString()}`);
       setPortfolioItems(response.data);
       
