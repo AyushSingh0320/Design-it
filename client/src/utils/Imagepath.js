@@ -17,7 +17,7 @@ const getImageUrl = (imagePath) => {
   
   // Environment-based URL handling
   const baseURL = process.env.NODE_ENV === 'production' 
-    ? process.env.REACT_APP_API_URL || 'https://api.design-it.live'
+    ? process.env.REACT_APP_API_URL || 'https://design-it.live'
     : 'http://localhost:5000';
   
   // Normalize path - handle backslashes and ensure leading slash

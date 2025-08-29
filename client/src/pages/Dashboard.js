@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from '../utils/axios';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
+import getImageUrl from '../utils/Imagepath.js';
 
 const Dashboard = () => {
   const [portfolioItems, setPortfolioItems] = useState([]);
@@ -90,7 +91,7 @@ const Dashboard = () => {
             >
               <img
                 src={item.images && item.images.length > 0 
-                  ? `http://localhost:5000${item.images[0].url}` 
+                  ? getImageUrl(item.images[0].url) 
                   : '/icon.png'}
                 alt={item.title}
                 className="w-full h-48 object-cover"

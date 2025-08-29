@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../utils/axios';
 import { toast } from 'react-hot-toast';
+import getImageUrl from '../utils/Imagepath';
 
 const EditPortfolioItem = () => {
   const navigate = useNavigate();
@@ -180,7 +181,7 @@ const EditPortfolioItem = () => {
               {existingImages.map((image, index) => (
                 <div key={index} className="relative">
                   <img
-                    src={`http://localhost:5000${image.url}`}
+                    src={getImageUrl(image.url)}
                     alt={`Current ${index + 1}`}
                     className="w-full h-32 object-cover rounded-md"
                   />

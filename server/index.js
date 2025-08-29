@@ -17,12 +17,17 @@ const messageRoutes = require('./routes/message')
 const app = express();
 
 // CORS configuration
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'],
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://design-it.live', 'https://www.design-it.live']
+    : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200 // For legacy browser support
+};
+
+app.use(cors(corsOptions));
 
 // Middleware
 app.use(express.json());
@@ -47,8 +52,11 @@ app.get('/', (req, res) => {
 });
 
 // Test route
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'API is working!' });
+app.get('/test', (req, res) => {
+  res.json({ message: 'Server is working!',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+   });
 });
 
 // Routes
