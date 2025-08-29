@@ -3,27 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axios';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
+import getImageUrl from '../utils/Imagepath';
 
-// Helper function to get full image URL
-const getImageUrl = (imagePath) => {
-  if (!imagePath) return '/icon.png';
-  
-  // Handle if imagePath is an object with url property
-  if (typeof imagePath === 'object' && imagePath.url) {
-    imagePath = imagePath.url;
-  }
-  
-  // Ensure imagePath is a string
-  if (typeof imagePath !== 'string') {
-    console.log('Invalid image path type:', typeof imagePath, imagePath);
-    return '/icon.png';
-  }
-  
-  if (imagePath.startsWith('http')) return imagePath;
-  // Normalize backslashes and ensure leading slash
-  const normalized = `/${imagePath}`.replace(/\\\\/g, '/').replace(/\/+/, '/');
-  return `http://localhost:5000${normalized}`;
-};
+
 
 const LikedPortfolios = () => {
   const navigate = useNavigate();
