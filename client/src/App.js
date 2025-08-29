@@ -13,7 +13,6 @@ import Profile from './pages/Profile';
 import PortfolioItem from './pages/PortfolioItem';
 import CreatePortfolioItem from './pages/CreatePortfolioItem';
 import EditPortfolioItem from './pages/EditPortfolioItem';
-import CreateCollaborationRequest from './pages/CreateCollaborationRequest';
 import LikedPortfolios from './pages/LikedPortfolios';
 import Network from './pages/Network';
 import Messages from './pages/Messages';
@@ -99,10 +98,6 @@ const router = createBrowserRouter([
         path: 'portfolio/:id/edit',
         element: <PrivateRoute><EditPortfolioItem /></PrivateRoute>
       },
-      {
-        path: 'collaboration/create',
-        element: <PrivateRoute><CreateCollaborationRequest /></PrivateRoute>
-      }
     ]
   }
 ]);
