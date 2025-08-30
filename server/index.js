@@ -28,7 +28,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -52,11 +51,8 @@ app.get('/', (req, res) => {
 });
 
 // Test route
-app.get('/test', (req, res) => {
-  res.json({ message: 'Server is working!',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-   });
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working!' });
 });
 
 // Routes
