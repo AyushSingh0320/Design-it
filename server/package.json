@@ -1,7 +1,7 @@
 {
-  "name": "designerhub-server",
+  "name": "esign-it-live-server",
   "version": "1.0.0",
-  "description": "Backend server for DesignerHub - Portfolio & Collaboration Platform",
+  "description": "Backend server for design-it.live",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

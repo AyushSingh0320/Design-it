@@ -2,7 +2,7 @@ const express = require('express');
 const Like = require('../models/Like');
 const auth = require('../middleware/auth');
 const router = express.Router();
-const User = require('../models/User');
+// const User = require('../models/User');
 const Portfolio = require('../models/Portfolio');
 
 // Method for creating a data of like for a portfolio

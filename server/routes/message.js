@@ -4,7 +4,7 @@ const Message = require('../models/message.js')
 const auth = require('../middleware/auth');
 const Collaboration = require('../models/Collaboration');
 
-// Api for posting the message data inti the datbase 
+// Api for posting the message data into the datbase 
 router.post('/sent' , auth , async (req , res) => {
     try {
        const sender = req.user._id

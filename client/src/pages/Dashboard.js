@@ -91,7 +91,7 @@ const Dashboard = () => {
             >
               <img
                 src={item.images && item.images.length > 0 
-                  ? getImageUrl(item.images[0].url) 
+                  ? getImageUrl(item.images[0]?.url) 
                   : '/icon.png'}
                 alt={item.title}
                 className="w-full h-48 object-cover"

@@ -1,7 +1,8 @@
 {
-  "name": "designerhub-client",
-  "version": "0.1.0",
+  "name": "design-it-live-client",
+  "version": "1.0.0",
   "private": true,
+  "homepage": "https://design-it.live",
   "dependencies": {
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.18",

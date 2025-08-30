@@ -15,9 +15,9 @@ const getImageUrl = (imagePath) => {
     return imagePath;
   }
   
-  // Environment-based URL handling
+  // Production uses same domain with /uploads path, development uses localhost:5000
   const baseURL = process.env.NODE_ENV === 'production' 
-    ? 'https://design-it.live'
+    ? 'https://design-it.live'  // Same domain as your site
     : 'http://localhost:5000';
   
   // Normalize path - handle backslashes and ensure leading slash
