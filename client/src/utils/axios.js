@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const instance = axios.create({
   baseURL: process.env.NODE_ENV === 'production'
-  ?`${process.env.REACT_APP_API_URL}/api` || "https://design-it.live/api" : 'http://localhost:5000/api',
+  ? process.env.REACT_APP_API_URL || "https://design-it.live/api" : 'http://localhost:5000/api',
   withCredentials: true,
   timeout: 10000,
   headers: {
