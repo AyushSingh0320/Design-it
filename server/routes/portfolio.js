@@ -4,6 +4,9 @@ const path = require('path');
 const fs = require('fs');
 const Portfolio = require('../models/Portfolio');
 const auth = require('../middleware/auth');
+const fileupload = require('../utils/cloudinary.js');
+
+// const { default: fileupload } = require('../utils/cloudinary.js');
 
 const router = express.Router();
 
@@ -26,14 +29,15 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+    files: 5 // Maximum 5 files
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|pdf/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
 
-    if (extname && mimetype) {
+    if (extname && mimetype) { 
       return cb(null, true);
     }
     cb(new Error('Only image files (JPEG, JPG, PNG, GIF) are allowed!'));
@@ -41,7 +45,7 @@ const upload = multer({
 });
 
 // Get all public portfolio items
-router.get('/', async (req, res) => {
+router.get('/', async (req, res , next) => {
   try {
     const { category, tag, search } = req.query;
     const query = { isPublic: true };
@@ -120,11 +124,41 @@ router.get('/user/:userId', async (req, res) => {
 });
 
 // Create portfolio item
-router.post('/', auth, upload.array('images', 5), async (req, res) => {
+router.post('/', auth,  async (req, res , next) => {
+ upload.array('images', 5)(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ 
+          message: 'File too large. Maximum size is 10MB per file.',
+          error: 'FILE_TOO_LARGE',
+          maxSize: '10MB'
+        });
+      }
+      if (err.code === 'LIMIT_FILE_COUNT') {
+        return res.status(400).json({ 
+          message: 'Too many files. Maximum 5 files allowed.',
+          error: 'TOO_MANY_FILES',
+          maxFiles: 5
+        });
+      }
+      return res.status(400).json({ 
+        message: err.message,
+        error: 'UPLOAD_ERROR'
+      });
+    } else if (err) {
+      return res.status(400).json({ 
+        message: err.message,
+        error: 'FILE_FILTER_ERROR'
+      });
+    }
+    next();
+  });
+},
+   async (req, res) => {
   try {
-    console.log('Request body:', req.body);
-    console.log('Request files:', req.files);
-    console.log('User ID:', req.user._id);
+    // console.log('Request body:', req.body);
+    // console.log('Request files:', req.files);
+    // console.log('User ID:', req.user._id);
 
     
     const { title, description, category, tags, isPublic } = req.body;
@@ -157,16 +191,36 @@ router.post('/', auth, upload.array('images', 5), async (req, res) => {
       }
     }
 
-    const images = req.files.map(file => ({
-      url: `/uploads/${file.filename}`,
-      caption: ''
+    const imagespath = req.files?.map(file => ({
+     url: file.path,
     }));
-
+    if(!imagespath){
+      res.status(404).json({message : "image is reuired"})
+    }
+      console.log(req.files)
+    
+      const uploadPromises = imagespath?.map(async (path) => {
+        try {
+          const response = await fileupload(path.url)
+          return {
+            url : response.url
+          }
+        } catch (error) {
+          console.error("image not found" , error)
+           return null;
+        }
+      })
+      console.log(uploadPromises)
+      const finalImages = await Promise.all(uploadPromises);
+      if(!finalImages){
+        res.status(404).json({message : "failed to upload images on cloudinary"})
+      }
+   
     const portfolio = new Portfolio({
       user: req.user._id,
       title,
       description,
-      images,
+      images:finalImages,
       category,
       tags: parsedTags,
       isPublic: isPublic === 'true' || isPublic === true
@@ -186,9 +240,9 @@ router.post('/', auth, upload.array('images', 5), async (req, res) => {
 });
 
 // Get a single portfolio item
-router.get('/new', (req, res) => {
-  res.status(404).json({ message: 'Invalid route. Use POST /portfolio to create a new item.' });
-});
+// router.get('/new', (req, res) => {
+//   res.status(404).json({ message: 'Invalid route. Use POST /portfolio to create a new item.' });
+// });
 
 router.get('/:id', async (req, res) => {
   try {
@@ -299,13 +353,33 @@ router.put('/:id', auth, upload.array('images', 5), async (req, res) => {
     }
 
     // Process new images if any
-    const newImages = req.files ? req.files.map(file => ({
-      url: `/uploads/${file.filename}`,
-      caption: ''
-    })) : [];
+   const imagespath = req.files?.map(file => ({
+     url: file.path,
+    }));
+    if(!imagespath){
+      res.status(404).json({message : "image is reuired"})
+    }
+      console.log(req.files)
+    
+      const uploadPromises = imagespath?.map(async (path) => {
+        try {
+          const response = await fileupload(path.url)
+          return {
+            url : response.url
+          }
+        } catch (error) {
+          console.error("image not found" , error)
+           return null;
+        }
+      })
+      console.log(uploadPromises)
+      const finalImages = await Promise.all(uploadPromises);
+      if(!finalImages){
+        res.status(404).json({message : "failed to upload images on cloudinary"})
+      }
 
     // Combine existing and new images
-    const allImages = [...existingImagesArray, ...newImages];
+    const allImages = [...existingImagesArray, ...finalImages];
 
     // Check if at least one image exists
     if (allImages.length === 0) {

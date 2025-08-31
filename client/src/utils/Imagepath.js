@@ -1,30 +1,17 @@
-
-
-
-
 const getImageUrl = (imagePath) => {
   if (!imagePath) return '/icon.png';
   
-  // Handle object format (like from database)
+  // Handle object format
   if (typeof imagePath === 'object' && imagePath.url) {
-    imagePath = imagePath.url;
+    return imagePath.url;
   }
   
-  // Handle different string formats
-  if (typeof imagePath === 'string' && imagePath.startsWith('http')) {
-    return imagePath;
-  }
-  
-  // Production uses same domain with /uploads path, development uses localhost:5000
-  const baseURL = process.env.NODE_ENV === 'production' 
-    ? 'https://design-it.live'  // Same domain as your site
-    : 'http://localhost:5000';
-  
-  // Normalize path - handle backslashes and ensure leading slash
-  const normalizedPath = imagePath?.toString().replace(/\\\\/g, '/');
-  const cleanPath = normalizedPath?.startsWith('/') ? normalizedPath : `/${normalizedPath}`;
-  
-  return `${baseURL}${cleanPath}`;
+  // Return the URL as-is (should be Cloudinary URL)
+  return imagePath;
 };
 
-export default getImageUrl; 
+export default getImageUrl;
+
+
+
+
