@@ -133,10 +133,14 @@ console.log("chat patner" , chatPartner)
               <img
                 src={chatPartner?.profileImage ? getImageUrl(chatPartner?.profileImage) : '/icon.png'}
                 alt={chatPartner.name}
-                className="w-10 h-10 rounded-full object-cover"
+                className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                onClick={() => navigate(`/profile/${chatPartner._id || chatPartner.id}`)}
               />
               <div>
-                <h2 className="text-white font-semibold">{chatPartner.name}</h2>
+                <h2 className="text-white font-semibold cursor-pointer" 
+                onClick={() => navigate(`/profile/${chatPartner._id || chatPartner.id}`)}
+                >{chatPartner.name}
+                </h2>
                 {/* <p className="text-gray-300 text-sm">Online</p> */}
               </div>
             </>
