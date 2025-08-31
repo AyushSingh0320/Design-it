@@ -59,7 +59,13 @@ const LikedPortfolios = () => {
       <h1 className="text-3xl font-bold mb-8 text-rose-100"> Portfolios that you have Liked </h1>
       
       {/* Portfolio Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        style={{
+          gridAutoRows: 'min-content',
+          alignItems: 'start'
+        }}
+      >
         {likedPortfolios.map((item, index) => {
           const portfolioId = item._id || item.id;
           
@@ -67,9 +73,14 @@ const LikedPortfolios = () => {
             <div 
               key={portfolioId || index} 
               className="bg-black/30 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden hover:shadow-xl hover:bg-black/40 transition-all duration-200 border border-white/10"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: 'fit-content'
+              }}
             >
               <div 
-                className="cursor-pointer"
+                className="cursor-pointer flex-shrink-0"
                 onClick={() => navigate(`/portfolio/${portfolioId}`)}
               >
                 <img
@@ -80,39 +91,56 @@ const LikedPortfolios = () => {
                   className="w-full h-48 object-cover"
                 />
               </div>
-              <div className="p-4">
+              <div 
+                className="p-4"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: 'fit-content'
+                }}
+              >
                   <h2 className="text-xl font-semibold mb-2 text-white">{item.title}</h2>
-                  <p className="text-gray-200 mb-4">{item.description}</p>
+                  <p 
+                    className="text-gray-200 mb-4" 
+                    style={{
+                      wordWrap: 'break-word',
+                      lineHeight: '1.5'
+                    }}
+                  >
+                    {item.description}
+                  </p>
                   
-                  {/* Owner Information */}
-                  {item.owner && (
-                    <div className="flex items-center mb-4">
-                      <img 
-                        src={getImageUrl(item.owner.profileImage)} 
-                        alt={item.owner.name}
-                         onClick={() => navigate(`/profile/${item.owner?._id || item.owner?.id}`)} 
-                        className="w-8 h-8 rounded-full mr-2 object-cover cursor-pointer"
-                      />
-                      <span className="text-gray-300 text-sm cursor-pointer" 
-                       onClick={() => navigate(`/profile/${item.owner?._id || item.owner?.id}`)}
-                      >by {item.owner.name}
-                      </span>
-                    </div>
-                  )}
-                  
-                  {/* Tags */}
-                  {item.tags && item.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {item.tags.map((tag, tagIndex) => (
-                        <span 
-                          key={tagIndex} 
-                          className="bg-blue-600/50 text-blue-200 px-2 py-1 rounded-full text-xs"
-                        >
-                          {tag}
+                  <div>
+                    {/* Owner Information */}
+                    {item.owner && (
+                      <div className="flex items-center mb-4">
+                        <img 
+                          src={getImageUrl(item.owner.profileImage)} 
+                          alt={item.owner.name}
+                           onClick={() => navigate(`/profile/${item.owner?._id || item.owner?.id}`)} 
+                          className="w-8 h-8 rounded-full mr-2 object-cover cursor-pointer"
+                        />
+                        <span className="text-gray-300 text-sm cursor-pointer" 
+                         onClick={() => navigate(`/profile/${item.owner?._id || item.owner?.id}`)}
+                        >by {item.owner.name}
                         </span>
-                      ))}
-                    </div>
-                  )}
+                      </div>
+                    )}
+                    
+                    {/* Tags */}
+                    {item.tags && item.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {item.tags.map((tag, tagIndex) => (
+                          <span 
+                            key={tagIndex} 
+                            className="bg-blue-600/50 text-blue-200 px-2 py-1 rounded-full text-xs"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
               </div>
             </div>
           );

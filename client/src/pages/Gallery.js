@@ -278,7 +278,13 @@ const Gallery = () => {
       </div>
 
       {/* Portfolio Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        style={{
+          gridAutoRows: 'min-content',
+          alignItems: 'start'
+        }}
+      >
         {portfolioItems.map(item => {
           const portfolioId = item._id || item.id;
           const itemLikesData = likesData[portfolioId] || { count: 0, isLiked: false };
@@ -288,9 +294,14 @@ const Gallery = () => {
             <div 
               key={portfolioId} 
               className="bg-black/30 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden hover:shadow-xl hover:bg-black/40 transition-all duration-200 border border-white/10"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: 'fit-content'
+              }}
             >
               <div 
-                className="cursor-pointer"
+                className="cursor-pointer flex-shrink-0"
                 onClick={() => navigate(`/portfolio/${portfolioId}`)}
               >
                 <img
@@ -301,66 +312,81 @@ const Gallery = () => {
                   className="w-full h-48 object-cover"
                 />
               </div>
-              <div className="p-4">
+              <div 
+                className="p-4"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: 'fit-content'
+                }}
+              >
                   <h2 className="text-xl font-semibold mb-2 text-white">{item.title}</h2>
-                  <p className="text-gray-200 mb-4">{item.description}</p>
-                  <div className="flex items-center mb-4 
-                  
-                  ">
-                    <img
-                      src={getImageUrl(item.user?.profileImage)}
-                      alt={item.user?.name}
-                      className="w-8 h-8 rounded-full mr-2 object-cover cursor-pointer"
-                      onClick={() => navigate(`/profile/${item.user?._id || item.user?.id}`)}
-                    />
-                    <span className="text-gray-200 cursor-pointer" 
-                    onClick={() => navigate(`/profile/${item.user?._id || item.user?.id}`)}>
-                    {item.user?.name}
-                      </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {item.tags?.map(tag => (
-                      <span
-                        key={tag}
-                        className="bg-white/20 text-white px-2 py-1 rounded-full text-sm backdrop-blur-sm"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                
-                
-                {/* Like button */}
-                <div className="flex items-center justify-between">
-                  <button
-                    onClick={(e) => handleLikeToggle(portfolioId, e)}
-                    disabled={isLikeLoading || !user}
-                    className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
-                      itemLikesData.isLiked
-                        ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
-                        : 'bg-white/10 text-gray-300 hover:bg-white/20'
-                    } ${(!user || isLikeLoading) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  <p 
+                    className="text-gray-200 mb-4" 
+                    style={{
+                      wordWrap: 'break-word',
+                      lineHeight: '1.5'
+                    }}
                   >
-                    <svg 
-                      className={`w-4 h-4 ${itemLikesData.isLiked ? 'fill-red-400' : 'fill-none stroke-current'}`} 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor" 
-                      strokeWidth="2"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
+                    {item.description}
+                  </p>
+                  <div>
+                    <div className="flex items-center mb-4">
+                      <img
+                        src={getImageUrl(item.user?.profileImage)}
+                        alt={item.user?.name}
+                        className="w-8 h-8 rounded-full mr-2 object-cover cursor-pointer"
+                        onClick={() => navigate(`/profile/${item.user?._id || item.user?.id}`)}
                       />
-                    </svg>
-                    <span>{isLikeLoading ? '...' : itemLikesData.count}</span>
-                  </button>
+                      <span className="text-gray-200 cursor-pointer" 
+                      onClick={() => navigate(`/profile/${item.user?._id || item.user?.id}`)}>
+                      {item.user?.name}
+                        </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {item.tags?.map(tag => (
+                        <span
+                          key={tag}
+                          className="bg-white/20 text-white px-2 py-1 rounded-full text-sm backdrop-blur-sm"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   
-                  {!user && (
-                    <span className="text-xs text-gray-400">Login to like</span>
-                  )}
+                  
+                  {/* Like button */}
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={(e) => handleLikeToggle(portfolioId, e)}
+                      disabled={isLikeLoading || !user}
+                      className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
+                        itemLikesData.isLiked
+                          ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                          : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                      } ${(!user || isLikeLoading) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    >
+                      <svg 
+                        className={`w-4 h-4 ${itemLikesData.isLiked ? 'fill-red-400' : 'fill-none stroke-current'}`} 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor" 
+                        strokeWidth="2"
+                      >
+                        <path 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round" 
+                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
+                        />
+                      </svg>
+                      <span>{isLikeLoading ? '...' : itemLikesData.count}</span>
+                    </button>
+                    
+                    {!user && (
+                      <span className="text-xs text-gray-400">Login to like</span>
+                    )}
+                  </div>
+                  </div>
                 </div>
-              </div>
             </div>
           );
         })}

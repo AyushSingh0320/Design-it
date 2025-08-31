@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from '../utils/axios';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
@@ -71,11 +71,22 @@ const Dashboard = () => {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          style={{
+            gridAutoRows: 'min-content',
+            alignItems: 'start'
+          }}
+        >
           {portfolioItems.map((item) => (
             <div 
               key={item.id} 
               className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: 'fit-content'
+              }}
               onClick={() => navigate(`/portfolio/${item._id}`)}
             >
               <img
@@ -85,32 +96,43 @@ const Dashboard = () => {
                 alt={item.title}
                 className="w-full h-48 object-cover"
               />
-              <div className="p-4">
+              <div 
+                className="p-4"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: 'fit-content'
+                }}
+              >
                 <h2 className="text-xl font-semibold mb-2">{item.title}</h2>
-                <p className="text-gray-600 mb-4">{item.description}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {item.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-sm"
+                <p 
+                  className="text-gray-600 mb-4" 
+                  style={{
+                    wordWrap: 'break-word',
+                    lineHeight: '1.5'
+                  }}
+                >
+                  {item.description}
+                </p>
+                <div>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {item.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-sm"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <Link
+                      to={`/portfolio/${item.id}/edit`}
+                      className="text-blue-500 hover:text-blue-600"
                     >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Link
-                    to={`/portfolio/${item.id}/edit`}
-                    className="text-blue-500 hover:text-blue-600"
-                  >
-                    Edit
-                  </Link>
-                  {/* <button
-                    onClick={() => handleDelete(item.id)}
-                    className="text-red-500 hover:text-red-600"
-                  >
-                    Delete
-                  </button> */}
+                      Edit
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

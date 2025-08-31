@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from '../utils/axios';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
+import getImageUrl from '../utils/Imagepath';
 
 const PortfolioItem = () => {
   const { id } = useParams();
@@ -206,17 +207,18 @@ const PortfolioItem = () => {
                 {item.images.length === 1 ? (
                   <div className="aspect-w-16 aspect-h-9">
                     <img
-                      src={`http://localhost:5000${item.images[0].url}`}
+                      src={getImageUrl(item.images[0].url)}
                       alt={item.title}
                       className="object-cover rounded-lg w-full"
                     />
                   </div>
+                  
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {item.images.map((image, index) => (
                       <div key={index} className="aspect-w-16 aspect-h-9">
                         <img
-                          src={`http://localhost:5000${image.url}`}
+                          src={getImageUrl(image.url)}
                           alt={`${item.title} ${index + 1}`}
                           className="object-cover rounded-lg w-full h-64"
                         />
