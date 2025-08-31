@@ -251,10 +251,10 @@ router.patch('/profile', auth, upload.single('profileImage'), async (req, res) =
       //  console.log(cloudinaryurl)
       updates.profileImage = cloudinaryurl;
       } catch (uploaderror) {
-         console.error('Cloudinary upload failed:', uploadError);
+         console.error('Cloudinary upload failed:', uploaderror);
           return res.status(500).json({ 
           message: 'Failed to upload image to cloud storage',
-          error: uploadError.message 
+          error: uploaderror.message 
       })
     }
 
