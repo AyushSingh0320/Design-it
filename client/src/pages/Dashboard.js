@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from '../utils/axios';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
-import getImageUrl from '../utils/Imagepath.js';
+import getImageUrl from '../utils/Imagepath';
 
 const Dashboard = () => {
   const [portfolioItems, setPortfolioItems] = useState([]);
@@ -38,18 +38,7 @@ const Dashboard = () => {
     fetchPortfolioItems();
   }, [user, navigate]);
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
-      try {
-        await axios.delete(`/portfolio/${id}`);
-        setPortfolioItems(portfolioItems.filter(item => item.id !== id));
-        toast.success('Portfolio item deleted successfully');
-      } catch (error) {
-        console.error('Error deleting portfolio item:', error);
-        toast.error('Failed to delete portfolio item');
-      }
-    }
-  };
+
 
   if (loading) {
     return (
@@ -116,12 +105,12 @@ const Dashboard = () => {
                   >
                     Edit
                   </Link>
-                  <button
+                  {/* <button
                     onClick={() => handleDelete(item.id)}
                     className="text-red-500 hover:text-red-600"
                   >
                     Delete
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>

@@ -3,15 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from '../utils/axios';
 import { toast } from 'react-hot-toast';
+import getImageUrl from '../utils/Imagepath';
 
-// Helper function to get full image URL
-const getImageUrl = (imagePath) => {
-  if (!imagePath) return '/icon.png';
-  if (imagePath.startsWith('http')) return imagePath;
-  // Normalize backslashes and ensure leading slash
-  const normalized = `/${imagePath}`.replace(/\\\\/g, '/').replace(/\/+/, '/');
-  return `http://localhost:5000${normalized}`;
-};
 
 const Profile = () => {
   const { id } = useParams();

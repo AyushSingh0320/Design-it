@@ -18,7 +18,7 @@ cloudinary.config({
         resource_type : "auto"
     })
      fs.unlinkSync(Filepath)
-    // console.log("File uploaded successfully" , response.url)
+    console.log("File uploaded successfully" , response)
     
     // console.log(response);
     return response;

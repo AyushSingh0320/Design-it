@@ -160,7 +160,6 @@ router.post('/', auth,  async (req, res , next) => {
     // console.log('Request files:', req.files);
     // console.log('User ID:', req.user._id);
 
-    
     const { title, description, category, tags, isPublic } = req.body;
     
     // Validate required fields

@@ -5,6 +5,7 @@ const User = require('../models/User');
 const auth = require('../middleware/auth');
 const Portfolio = require('../models/Portfolio');
 const { default: mongoose } = require('mongoose');
+const fileupload = require('../utils/cloudinary.js');
 
 const router = express.Router();
 
@@ -235,16 +236,26 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update user profile
-router.patch('/profile', auth, upload.single('profileImage'), async (req, res) => {
+router.patch('/profiless', auth, upload.single('profileImage'), async (req, res) => {
   try {
     const updates = req.body;
     const allowedUpdates = ['name', 'bio', 'skills', 'socialLinks', 'profileImage'];
-    
+    console.log(req.file)
     // Handle profile image upload
     if (req.file) {
-      // Store a normalized web path with leading slash and forward slashes
-      const normalized = `/uploads/${req.file.filename}`;
-      updates.profileImage = normalized;
+      try {
+      const Imagepath = req.file?.path
+      const cloudinary = await fileupload(Imagepath);
+      const cloudinaryurl = cloudinary.url
+      // console.log("imagepath" , Imagepath)
+      //  console.log(cloudinaryurl)
+      updates.profileImage = cloudinaryurl;
+      } catch (uploaderror) {
+         console.error('Cloudinary upload failed:', uploadError);
+          return res.status(500).json({ 
+          message: 'Failed to upload image to cloud storage',
+          error: uploadError.message 
+      })
     }
 
     // Filter out invalid updates
@@ -268,13 +279,21 @@ router.patch('/profile', auth, upload.single('profileImage'), async (req, res) =
       { new: true, runValidators: true }
     ).select('-password');
 
+    if(!user){
+      return res.status(404).json({
+        message : "user not found"
+      })
+    }
+
     // Transform _id to id for consistency
     const userObj = user.toObject();
     userObj.id = userObj._id;
     delete userObj._id;
 
-    res.json(userObj);
+    res.status(200).json(updates);
+  }
   } catch (error) {
+    console.error('Error updating profile:', error);
     res.status(400).json({ message: error.message });
   }
 });
