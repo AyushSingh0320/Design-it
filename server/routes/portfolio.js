@@ -33,14 +33,23 @@ const upload = multer({
     files: 5 // Maximum 5 files
   },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif|pdf/;
+    console.log('Processing file:', {
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size
+    });
+    
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
 
     if (extname && mimetype) { 
+      console.log('File accepted:', file.originalname);
       return cb(null, true);
     }
-    cb(new Error('Only image files (JPEG, JPG, PNG, GIF) are allowed!'));
+    
+    console.log('File rejected:', file.originalname, 'Type:', file.mimetype);
+    cb(new Error(`File '${file.originalname}' rejected. Only image files (JPEG, JPG, PNG, GIF, WebP) are allowed!`));
   }
 });
 
@@ -193,33 +202,51 @@ router.post('/', auth,  async (req, res , next) => {
     const imagespath = req.files?.map(file => ({
      url: file.path,
     }));
-    if(!imagespath){
-      res.status(404).json({message : "image is reuired"})
-    }
-      console.log(req.files)
     
-      const uploadPromises = imagespath?.map(async (path) => {
+    if(!imagespath || imagespath.length === 0){
+      return res.status(400).json({message : "At least one image is required"})
+    }
+    
+    console.log(`Processing ${imagespath.length} images:`, imagespath.map(img => img.url));
+    console.log('Files received:', req.files)
+    
+      const uploadPromises = imagespath?.map(async (path, index) => {
         try {
+          console.log(`Uploading image ${index + 1}/${imagespath.length}:`, path.url);
           const response = await fileupload(path.url)
           return {
-            url : response.url
+            url : response.secure_url || response.url
           }
         } catch (error) {
-          console.error("image not found" , error)
-           return null;
+          console.error(`Failed to upload image ${index + 1}:`, error.message)
+          throw new Error(`Failed to upload image ${index + 1}: ${error.message}`);
         }
       })
-      console.log(uploadPromises)
-      const finalImages = await Promise.all(uploadPromises);
-      if(!finalImages){
-        res.status(404).json({message : "failed to upload images on cloudinary"})
-      }
+      
+      console.log(`Uploading ${uploadPromises.length} images to cloudinary...`)
+      
+      try {
+        const finalImages = await Promise.all(uploadPromises);
+        console.log('All images uploaded successfully:', finalImages.length);
+        
+        // Filter out any null values (shouldn't happen now, but safety check)
+        const validImages = finalImages.filter(img => img && img.url);
+        
+        if (validImages.length === 0) {
+          return res.status(400).json({
+            message: "No images were successfully uploaded to cloudinary"
+          });
+        }
+        
+        if (validImages.length !== imagespath.length) {
+          console.warn(`Warning: ${imagespath.length - validImages.length} images failed to upload`);
+        }
    
     const portfolio = new Portfolio({
       user: req.user._id,
       title,
       description,
-      images:finalImages,
+      images: validImages,
       category,
       tags: parsedTags,
       isPublic: isPublic === 'true' || isPublic === true
@@ -229,6 +256,14 @@ router.post('/', auth,  async (req, res , next) => {
     await portfolio.save();
     console.log('Portfolio item created successfully');
     res.status(201).json(portfolio);
+    
+    } catch (uploadError) {
+      console.error('Error uploading images to cloudinary:', uploadError);
+      return res.status(500).json({
+        message: "Failed to upload images to cloudinary",
+        error: uploadError.message
+      });
+    }
   } catch (error) {
     console.error('Error creating portfolio item:', error);
     res.status(400).json({ 

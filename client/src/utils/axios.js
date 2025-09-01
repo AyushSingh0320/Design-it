@@ -23,7 +23,11 @@ instance.interceptors.request.use(
     if (config.data instanceof FormData) {
       delete config.headers['Content-Type'];
     }
-    
+    // Timeout for fileupload
+     if (config.data instanceof FormData) {
+      config.timeout = 120000; // ✅ 2 minutes for file uploads
+      delete config.headers['Content-Type']; // Let browser set it for FormData
+    }
     return config;
   },
   (error) => {

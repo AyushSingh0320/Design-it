@@ -145,7 +145,7 @@ const CreatePortfolioItem = () => {
 
         <div className="mb-6">
           <label htmlFor="images" className="block text-sm font-medium text-rose-100 mb-2">
-            Images (up to 5)
+            Images (up to 5) 
           </label>
           <input
             type="file"

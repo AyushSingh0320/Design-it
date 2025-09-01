@@ -257,6 +257,7 @@ router.patch('/profile', auth, upload.single('profileImage'), async (req, res) =
           error: uploaderror.message 
       })
     }
+  } 
 
     // Filter out invalid updates
     Object.keys(updates).forEach(update => {
@@ -292,7 +293,7 @@ router.patch('/profile', auth, upload.single('profileImage'), async (req, res) =
 
     res.status(200).json(updates);
   }
-  } catch (error) {
+   catch (error) {
     console.error('Error updating profile:', error);
     res.status(400).json({ message: error.message });
   }
