@@ -28,6 +28,7 @@ const Messages = () => {
       fetchConversations();
     }
   }, [currentUser]);
+  console.log( "Lastmessage" , conversations)
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -92,7 +93,6 @@ const Messages = () => {
               <div className="flex items-center space-x-3">
                 {/* Profile Image */}
                 <div className="relative">
-                    {/* image is not coming */}
                   <img
                     src={conversation.user?.profileImage ? getImageUrl(conversation.user?.profileImage) : '/icon.png'}
                     alt={conversation.user?.name || 'User'}
@@ -118,7 +118,7 @@ const Messages = () => {
                   
                   <div className="flex items-center justify-between">
                     <p className={`text-sm truncate ${conversation.unreadCount > 0 ? 'text-white font-medium' : 'text-gray-300'}`}>
-                       {conversation.lastMessage?.sender === currentUser?._id || currentUser?.id ? 'You: ' : ''}
+                       {conversation.lastMessage?.sender === (currentUser?._id || currentUser?.id) ? 'You: ' : `${conversation.user.name}: `}
                        {truncateMessage(conversation.lastMessage?.content || 'No messages yet')}
                     </p>
                   </div>

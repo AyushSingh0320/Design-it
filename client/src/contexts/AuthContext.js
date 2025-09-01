@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axios';
 import { toast } from 'react-hot-toast';
@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      toast.dismiss();
       setLoading(true);
       const response = await axios.post('/auth/login', { email, password });
       const { token, user } = response.data;
@@ -51,8 +52,8 @@ export const AuthProvider = ({ children }) => {
       navigate('/dashboard');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Login failed';
-      toast.error(errorMessage);
-      throw error;
+      //toast.error(errorMessage);
+      throw errorMessage;
     } finally {
       setLoading(false);
     }
@@ -86,17 +87,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback( () => {
     try {
       localStorage.removeItem('token');
       setUser(null);
-      toast.success('Logged out successfully');
+      toast.success('Logged out successfully' ,
+        {
+      id: 'logout-success', // Unique ID prevents duplicates
+      duration: 2000 }
+      );
       navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('Failed to logout');
     }
-  };
+  }  , [navigate]);
 
   const value = {
     user,

@@ -30,14 +30,9 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const result = await login(formData.email, formData.password);
-      if (result.success) {
-        toast.success('Logged in successfully');
-      } else {
-        toast.error(result.message);
-      }
+     await login(formData.email, formData.password)
     } catch (error) {
-      toast.error('An error occurred during login');
+      throw new Error(error.message)
     } finally {
       setLoading(false);
     }
