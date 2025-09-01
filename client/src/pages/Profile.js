@@ -168,13 +168,13 @@ const Profile = () => {
       }
       
       // Check if profile owner has sent a request to current user
-      // const receivedResponse = await axios.get('/collaboration/received');
-      // const receivedRequest = receivedResponse.data.find(collab => collab.sender.id === user.id);
+      const receivedResponse = await axios.get('/collaboration/received');
+      const receivedRequest = receivedResponse.data.find(collab => collab.sender.id === user.id);
       
-      // if (receivedRequest) {
-      //   setCollaborationStatus(receivedRequest.status);
-      //   return;
-      // }
+      if (receivedRequest) {
+        setCollaborationStatus(receivedRequest.status);
+        return;
+      }
       
       // No collaboration found
       setCollaborationStatus(null);
