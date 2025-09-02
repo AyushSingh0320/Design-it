@@ -69,21 +69,21 @@ const Network = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
       <div className="">
         {/* Header */}
-        <div className="border-b border-gray-200 p-6">
-          <h1 className="text-2xl font-bold text-rose-100 ">My Network</h1>
-          <p className="text-rose-100 mt-1">
+        <div className="border-b border-gray-200 p-4 sm:p-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-rose-100">My Network</h1>
+          <p className="text-rose-100 mt-1 text-sm sm:text-base">
             Manage your collaboration requests ({requests.length} pending)
           </p>
         </div>
 
         {/* Requests List */}
-        <div >
+        <div>
           {requests.length === 0 ? (
-            <div className="p-8 text-center">
-              <div className="flex flex-col items-center">
+            <div className="p-6 sm:p-8 text-center">
+              <div className="flex flex-col items-center max-w-md mx-auto">
                 <svg 
                   className="w-16 h-16 text-gray-300 mb-4" 
                   fill="none" 
@@ -98,34 +98,34 @@ const Network = () => {
                   />
                 </svg>
                 <h3 className="text-lg font-medium text-rose-100 mb-2">No collaboration requests</h3>
-                <p className="text-rose-100">You don't have any pending collaboration requests at the moment.</p>
+                <p className="text-rose-100 text-sm sm:text-base">You don't have any pending collaboration requests at the moment.</p>
               </div>
             </div>
           ) : (
             requests.map((request) => (
-              <div key={request._id} className="p-6">
-                <div className="flex items-center justify-between">
+              <div key={request._id} className="p-4 sm:p-6 border-b border-gray-200 last:border-b-0">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   {/* Sender Info */}
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
                     <div 
-                      className="cursor-pointer"
+                      className="cursor-pointer flex-shrink-0"
                       onClick={() => navigate(`/profile/${request.sender.id}`)}
                     >
                       <img
                         src={getImageUrl(request.sender.profileImage)}
                         alt={request.sender.name}
-                        className="w-16 h-16 rounded-full object-cover border-2 border-gray-200 hover:border-blue-300 transition-colors duration-200"
+                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-gray-200 hover:border-blue-300 transition-colors duration-200"
                       />
                     </div>
                     
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <h3 
-                        className="text-lg font-semibold text-rose-100  hover:text-blue-600 cursor-pointer transition-colors duration-200"
+                        className="text-base sm:text-lg font-semibold text-rose-100 hover:text-blue-600 cursor-pointer transition-colors duration-200 truncate"
                         onClick={() => navigate(`/profile/${request.sender.id}`)}
                       >
                         {request.sender.name}
                       </h3>
-                      <p className=" text-sm text-rose-100 ">
+                      <p className="text-xs sm:text-sm text-rose-100">
                         Wants to collaborate with you
                       </p>
                       <p className="text-gray-200 text-xs mt-1">
@@ -139,7 +139,7 @@ const Network = () => {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0 w-full sm:w-auto justify-center sm:justify-end">
                     {/* Accept Button */}
                     <button
                       onClick={() => handleRequestAction(request._id, 'accepted')}
@@ -150,7 +150,7 @@ const Network = () => {
                       {actionLoading[request._id] === 'accepted' ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
                       ) : (
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                         </svg>
                       )}
@@ -166,7 +166,7 @@ const Network = () => {
                       {actionLoading[request._id] === 'rejected' ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
                       ) : (
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       )}
@@ -175,7 +175,7 @@ const Network = () => {
                     {/* View Profile Button */}
                     <button
                       onClick={() => navigate(`/profile/${request.sender.id}`)}
-                      className="px-4 py-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg text-sm font-medium transition-colors duration-200"
+                      className="px-3 py-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg text-xs sm:text-sm font-medium transition-colors duration-200 hidden sm:block"
                     >
                       View Profile
                     </button>

@@ -55,12 +55,12 @@ const LikedPortfolios = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-rose-100"> Portfolios that you have Liked </h1>
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-rose-100">Portfolios that you have Liked</h1>
       
       {/* Portfolio Grid */}
       <div 
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
         style={{
           gridAutoRows: 'min-content',
           alignItems: 'start'
@@ -88,23 +88,27 @@ const LikedPortfolios = () => {
                     ? getImageUrl(item.images[0].url)
                     : '/icon.png'}
                   alt={item.title}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-40 sm:h-48 object-cover"
                 />
               </div>
               <div 
-                className="p-4"
+                className="p-3 sm:p-4"
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   minHeight: 'fit-content'
                 }}
               >
-                  <h2 className="text-xl font-semibold mb-2 text-white">{item.title}</h2>
+                  <h2 className="text-lg sm:text-xl font-semibold mb-2 text-white line-clamp-2">{item.title}</h2>
                   <p 
-                    className="text-gray-200 mb-4" 
+                    className="text-gray-200 mb-4 text-sm sm:text-base" 
                     style={{
                       wordWrap: 'break-word',
-                      lineHeight: '1.5'
+                      lineHeight: '1.5',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
                     }}
                   >
                     {item.description}
@@ -113,16 +117,18 @@ const LikedPortfolios = () => {
                   <div>
                     {/* Owner Information */}
                     {item.owner && (
-                      <div className="flex items-center mb-4">
+                      <div className="flex items-center mb-3 sm:mb-4">
                         <img 
                           src={getImageUrl(item.owner.profileImage)} 
                           alt={item.owner.name}
                            onClick={() => navigate(`/profile/${item.owner?._id || item.owner?.id}`)} 
-                          className="w-8 h-8 rounded-full mr-2 object-cover cursor-pointer"
+                          className="w-6 h-6 sm:w-8 sm:h-8 rounded-full mr-2 object-cover cursor-pointer"
                         />
-                        <span className="text-gray-300 text-sm cursor-pointer" 
-                         onClick={() => navigate(`/profile/${item.owner?._id || item.owner?.id}`)}
-                        >by {item.owner.name}
+                        <span 
+                          className="text-gray-300 text-xs sm:text-sm cursor-pointer truncate" 
+                          onClick={() => navigate(`/profile/${item.owner?._id || item.owner?.id}`)}
+                        >
+                          by {item.owner.name}
                         </span>
                       </div>
                     )}
@@ -130,7 +136,7 @@ const LikedPortfolios = () => {
                     {/* Tags */}
                     {item.tags && item.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-4">
-                        {item.tags.map((tag, tagIndex) => (
+                        {item.tags.slice(0, 3).map((tag, tagIndex) => (
                           <span 
                             key={tagIndex} 
                             className="bg-blue-600/50 text-blue-200 px-2 py-1 rounded-full text-xs"
@@ -138,6 +144,11 @@ const LikedPortfolios = () => {
                             {tag}
                           </span>
                         ))}
+                        {item.tags.length > 3 && (
+                          <span className="bg-gray-600/50 text-gray-300 px-2 py-1 rounded-full text-xs">
+                            +{item.tags.length - 3}
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -149,18 +160,23 @@ const LikedPortfolios = () => {
 
       {likedPortfolios.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-gray-200 text-lg mb-4">
+          <div className="max-w-md mx-auto">
             <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
-            <p>You haven't liked any portfolios yet.</p>
-            <p className="text-sm text-gray-400 mt-2">
-              Browse the <button 
-                className="text-blue-400 hover:text-blue-300 underline"
+            <h3 className="text-lg font-medium text-gray-200 mb-2">No liked portfolios yet</h3>
+            <p className="text-gray-400 text-sm sm:text-base mb-4">
+              You haven't liked any portfolios yet.
+            </p>
+            <p className="text-gray-400 text-sm">
+              Browse the{' '}
+              <button 
+                className="text-blue-400 hover:text-blue-300 underline font-medium"
                 onClick={() => navigate('/gallery')}
               >
                 gallery
-              </button> to discover amazing portfolios!
+              </button>
+              {' '}to discover amazing portfolios!
             </p>
           </div>
         </div>

@@ -131,19 +131,19 @@ const PortfolioItem = () => {
   const isOwner = user?.id === item.user.id;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
         <div className="px-4 py-5 sm:px-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg sm:text-xl leading-6 font-medium text-gray-900">
                 {item.title}
               </h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500">
                 Created by{' '}
                 <Link
                   to={`/profile/${item.user.id}`}
-                  className="text-primary-600 hover:text-primary-500"
+                  className="text-primary-600 hover:text-primary-500 font-medium"
                 >
                   {item.user.name}
                 </Link>
@@ -181,16 +181,16 @@ const PortfolioItem = () => {
               </div>
             </div>
             {isOwner && (
-              <div className="flex space-x-3">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                 <Link
                   to={`/portfolio/${id}/edit`}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                  className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                 >
                   Edit
                 </Link>
                 <button
                   onClick={() => setShowDeleteModal(true)}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                 >
                   Delete
                 </button>
@@ -205,48 +205,86 @@ const PortfolioItem = () => {
             {item.images && item.images.length > 0 && (
               <div className="mb-6">
                 {item.images.length === 1 ? (
-                  <div className="aspect-w-16 aspect-h-9">
+                  <div className="relative w-full">
                     <img
                       src={getImageUrl(item.images[0].url)}
                       alt={item.title}
-                      className="object-cover rounded-lg w-full"
+                      className="w-full h-48 sm:h-64 md:h-80 object-cover rounded-lg shadow-md"
                     />
                   </div>
-                  
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {item.images.map((image, index) => (
-                      <div key={index} className="aspect-w-16 aspect-h-9">
+                      <div key={index} className="relative group">
                         <img
                           src={getImageUrl(image.url)}
                           alt={`${item.title} ${index + 1}`}
-                          className="object-cover rounded-lg w-full h-64"
+                          className="w-full h-48 sm:h-56 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
                         />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-lg"></div>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
             )}
-            <div className="prose max-w-none">
-              <p className="text-gray-700">{item.description}</p>
-            </div>
-            <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-500">Category</h4>
-              <p className="mt-1 text-sm text-gray-900">{item.category}</p>
-            </div>
-            <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-500">Tags</h4>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {item.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
-                  >
-                    {tag}
-                  </span>
-                ))}
+            
+            {/* Description */}
+            <div className="mb-6">
+              <h4 className="text-base font-medium text-gray-900 mb-3">Description</h4>
+              <div className="prose max-w-none">
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base whitespace-pre-wrap">
+                  {item.description}
+                </p>
               </div>
+            </div>
+            
+            {/* Category and Date */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h4 className="text-sm font-medium text-gray-900">Category</h4>
+                <p className="mt-1 text-sm text-gray-600">{item.category}</p>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-gray-900">Created</h4>
+                <p className="mt-1 text-sm text-gray-600">
+                  {new Date(item.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
+              </div>
+            </div>
+            
+            {/* Tags */}
+            {item.tags && item.tags.length > 0 && (
+              <div className="mb-6">
+                <h4 className="text-base font-medium text-gray-900 mb-3">Tags</h4>
+                <div className="flex flex-wrap gap-2">
+                  {item.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 hover:bg-primary-200 transition-colors duration-200"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Back to Gallery Button */}
+            <div className="pt-4 border-t border-gray-200">
+              <Link
+                to="/gallery"
+                className="inline-flex items-center text-primary-600 hover:text-primary-500 text-sm font-medium"
+              >
+                <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Gallery
+              </Link>
             </div>
           </div>
         </div>

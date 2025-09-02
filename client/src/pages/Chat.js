@@ -118,30 +118,33 @@ console.log("chat patner" , chatPartner)
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-4xl h-screen flex flex-col">
       {/* Chat Header */}
-      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-4 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
+      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 mb-4 flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
           <button 
             onClick={() => navigate('/messages')}
-            className="text-white hover:text-purple-300 transition-colors"
+            className="text-white hover:text-purple-300 transition-colors p-1"
           >
-            ← Back
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
           {chatPartner && (
             <>
               <img
                 src={chatPartner?.profileImage ? getImageUrl(chatPartner?.profileImage) : '/icon.png'}
                 alt={chatPartner.name}
-                className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover cursor-pointer flex-shrink-0"
                 onClick={() => navigate(`/profile/${chatPartner._id || chatPartner.id}`)}
               />
-              <div>
-                <h2 className="text-white font-semibold cursor-pointer" 
-                onClick={() => navigate(`/profile/${chatPartner._id || chatPartner.id}`)}
-                >{chatPartner.name}
+              <div className="min-w-0 flex-1">
+                <h2 
+                  className="text-white font-semibold cursor-pointer text-sm sm:text-base truncate" 
+                  onClick={() => navigate(`/profile/${chatPartner._id || chatPartner.id}`)}
+                >
+                  {chatPartner.name}
                 </h2>
-                {/* <p className="text-gray-300 text-sm">Online</p> */}
               </div>
             </>
           )}
@@ -149,13 +152,18 @@ console.log("chat patner" , chatPartner)
       </div>
 
       {/* Messages Container */}
-      <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 h-96 overflow-y-auto mb-4">
+      <div className="bg-white/5 backdrop-blur-sm rounded-lg p-3 sm:p-4 flex-1 overflow-y-auto mb-4 min-h-0">
         {messages.length === 0 ? (
           <div className="flex justify-center items-center h-full">
-            <p className="text-gray-400">No messages yet. Start the conversation!</p>
+            <div className="text-center">
+              <svg className="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.955 8.955 0 01-4.126-1.022L3 21l1.022-5.874A8.955 8.955 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z" />
+              </svg>
+              <p className="text-gray-400 text-sm sm:text-base">No messages yet. Start the conversation!</p>
+            </div>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {messages.map((message) => {
               const isCurrentUser = message.sender._id === currentUser.id;
               return (
@@ -163,12 +171,12 @@ console.log("chat patner" , chatPartner)
                   key={message._id}
                   className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                  <div className={`max-w-[80%] sm:max-w-xs lg:max-w-md px-3 py-2 rounded-lg ${
                     isCurrentUser 
-                      ? 'bg-purple-600 text-white' 
-                      : 'bg-white/20 text-white'
+                      ? 'bg-purple-600 text-white rounded-br-sm' 
+                      : 'bg-white/20 text-white rounded-bl-sm'
                   }`}>
-                    <p className="text-sm">{message.content}</p>
+                    <p className="text-sm sm:text-base break-words">{message.content}</p>
                     <p className={`text-xs mt-1 ${
                       isCurrentUser ? 'text-purple-200' : 'text-gray-300'
                     }`}>
@@ -184,22 +192,34 @@ console.log("chat patner" , chatPartner)
       </div>
 
       {/* Message Input */}
-      <form onSubmit={handleSendMessage} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-        <div className="flex space-x-3">
+      <form onSubmit={handleSendMessage} className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 flex-shrink-0">
+        <div className="flex space-x-2 sm:space-x-3">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 bg-white/20 text-white placeholder-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="flex-1 bg-white/20 text-white placeholder-gray-300 rounded-lg px-3 py-2 sm:px-4 sm:py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
             disabled={sending}
           />
           <button
             type="submit"
             disabled={sending || !newMessage.trim()}
-            className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
+            className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white px-4 py-2 sm:px-6 sm:py-2 rounded-lg transition-colors text-sm sm:text-base flex-shrink-0"
           >
-            {sending ? 'Sending...' : 'Send'}
+            {sending ? (
+              <div className="flex items-center space-x-1">
+                <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                <span className="hidden sm:inline">Sending...</span>
+              </div>
+            ) : (
+              <>
+                <span className="hidden sm:inline">Send</span>
+                <svg className="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </>
+            )}
           </button>
         </div>
       </form>
