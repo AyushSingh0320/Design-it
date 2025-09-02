@@ -244,7 +244,7 @@ const Gallery = () => {
           return (
             <div 
               key={portfolioId} 
-              className="bg-black/30 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden hover:shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95 "
+              className="bg-black/30 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden hover:shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95 border border-gray-500 "
               style={{
                 display: 'flex',
                 flexDirection: 'column',

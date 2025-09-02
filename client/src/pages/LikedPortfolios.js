@@ -72,7 +72,7 @@ const LikedPortfolios = () => {
           return (
             <div 
               key={portfolioId || index} 
-              className="bg-black/30 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden hover:shadow-xl hover:bg-black/40 transition-all duration-200 border border-white/10"
+              className="bg-black/30 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden hover:shadow-xl hover:bg-black/40 transition-all duration-200  border border-gray-500"
               style={{
                 display: 'flex',
                 flexDirection: 'column',
