@@ -21,7 +21,7 @@ const collaborationSchema = new mongoose.Schema({
 });
 
 // Prevent duplicate collaboration requests
-collaborationSchema.index({ sender: 1, receiver: 1 }, { unique: true });
+ collaborationSchema.index({ sender: 1, receiver: 1 });
 
 const Collaboration = mongoose.model('Collaboration', collaborationSchema);
 

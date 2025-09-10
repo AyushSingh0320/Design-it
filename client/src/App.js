@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer.js'
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -42,7 +41,6 @@ const AppLayout = () => (
         <main className="  flex-1 bg-transparent">
           <Outlet />
         </main>
-        <Footer />
       </div>
     </div>
   </AuthProvider>

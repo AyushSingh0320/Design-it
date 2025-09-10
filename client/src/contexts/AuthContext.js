@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       navigate('/dashboard');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Login failed';
-      //toast.error(errorMessage);
+      toast.error(errorMessage);
       throw errorMessage;
     } finally {
       setLoading(false);
